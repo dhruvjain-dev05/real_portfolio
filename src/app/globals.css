@@ -1,26 +1,283 @@
 @import "tailwindcss";
 
+/* bind Tailwind's dark: variant to our .dark class (set by the theme toggle)
+   instead of the OS-level prefers-color-scheme default */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* light theme (default — active when the "dark" class is absent from <html>) */
+  --bg-primary: #fcfcfb;
+  --bg-surface: #f4f4f2;
+  --bg-surface-elevated: #ededea;
+  --bg-surface-subtle: #f7f7f5;
+
+  --text-display: #14120f;
+  --text-primary: #1a1a18;
+  --text-secondary: #55534e;
+  --text-tertiary: #605e58;
+  --text-muted: #77746d;
+  --text-faint: #8a8781;
+  --text-dim: #93908a;
+  --text-ghost: #cfcdc7;
+
+  --border-default: #dcdad4;
+  --border-hover: #a8a59d;
+  --border-inset: #e9e7e2;
+  --rule: #e7e5df;
+  --rule-strong: #d6d3cc;
+
+  --accent-blue: #3b82f6;
+  --accent-amber: #b45309;
+  --accent-green: #16a34a;
+  --accent-red: #dc2626;
+  --accent-yellow: #b45309;
+
+  --status-active: #0a9a4a;
+  --status-past: #c2410c;
+  --status-future: #b45309;
+
+  --cal-level-0: #eceae4;
+  --cal-level-1: #cbc8c0;
+  --cal-level-2: #a09c93;
+  --cal-level-3: #6f6b63;
+  --cal-level-4: #3b3833;
+}
+
+.dark {
+  /* dark theme override — active while <html> carries the "dark" class */
+  --bg-primary: #0b0d0e;
+  --bg-surface: #141617;
+  --bg-surface-elevated: #1c1e20;
+  --bg-surface-subtle: #121415;
+
+  --text-display: #f6f3ef;
+  --text-primary: #f2f2f0;
+  --text-secondary: #a5a5a0;
+  --text-tertiary: #999994;
+  --text-muted: #868682;
+  --text-faint: #6f6f6b;
+  --text-dim: #6a6a66;
+  --text-ghost: #343431;
+
+  --border-default: #2a2c2e;
+  --border-hover: #4a4d50;
+  --border-inset: #1e2022;
+  --rule: #1d1f21;
+  --rule-strong: #26282a;
+
+  --accent-blue: #60a5fa;
+  --accent-amber: #d99a3a;
+  --accent-green: #4ade80;
+  --accent-red: #f87171;
+  --accent-yellow: #fbbf24;
+
+  --status-active: #3ddc84;
+  --status-past: #f87171;
+  --status-future: #fbbf24;
+
+  --cal-level-0: #1b1d1f;
+  --cal-level-1: #33363a;
+  --cal-level-2: #55595e;
+  --cal-level-3: #878c92;
+  --cal-level-4: #d7dbe0;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-surface-elevated: var(--bg-surface-elevated);
+  --color-bg-surface-subtle: var(--bg-surface-subtle);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-text-display: var(--text-display);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+  --color-text-dim: var(--text-dim);
+  --color-text-ghost: var(--text-ghost);
+
+  --color-border-default: var(--border-default);
+  --color-border-hover: var(--border-hover);
+  --color-border-inset: var(--border-inset);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-amber: var(--accent-amber);
+  --color-accent-green: var(--accent-green);
+  --color-accent-red: var(--accent-red);
+  --color-accent-yellow: var(--accent-yellow);
+
+  --color-status-active: var(--status-active);
+  --color-status-past: var(--status-past);
+  --color-status-future: var(--status-future);
+
+  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --font-ui: var(--font-jakarta), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "Courier New", monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-jakarta), sans-serif;
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease;
+}
+
+
+::selection {
+  background: color-mix(in srgb, var(--text-primary) 18%, transparent);
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rule-strong);
+  border-radius: 10px;
+}
+
+/* ── Marquee: two sets side by side, translated exactly one set width so the
+   loop is seamless. Pauses on hover, stops entirely for reduced motion. ── */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.marquee-set {
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+  padding-right: 2.25rem;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none !important;
+  }
+  .marquee {
+    overflow-x: auto;
+  }
+}
+
+/* placeholder shown until a real banner image is set in src/data/profile.ts */
+.banner-placeholder {
+  background-color: var(--bg-surface);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0 11px,
+    var(--rule) 11px 12px
+  );
+}
+
+/* corner-bracket accent on section kickers — the signature detail borrowed
+   from the manixh reference: "[ My Skills ]" drawn from real corner strokes,
+   not literal bracket characters. */
+.corner-brackets {
+  position: relative;
+  display: inline-block;
+  padding: 2px 11px;
+}
+
+.corner-brackets::before,
+.corner-brackets::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  border-color: var(--text-faint);
+}
+
+.corner-brackets::before {
+  left: 0;
+  border-left: 1px solid var(--text-faint);
+  border-top: 1px solid var(--text-faint);
+  border-bottom: 1px solid var(--text-faint);
+}
+
+.corner-brackets::after {
+  right: 0;
+  border-right: 1px solid var(--text-faint);
+  border-top: 1px solid var(--text-faint);
+  border-bottom: 1px solid var(--text-faint);
+}
+
+/* soft glow behind status dots (experience timeline, hero status pill) */
+.status-dot-glow {
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 18%, transparent);
+}
+
+/* horizontal scroll without a visible scrollbar (narrow-screen nav) */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in srgb, currentColor 12%, transparent);
+  }
+}
+
+.live-pulse-dot {
+  animation: live-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes tooltip-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
