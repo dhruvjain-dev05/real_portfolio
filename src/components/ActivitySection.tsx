@@ -1,11 +1,15 @@
 import Section from "./Section";
 import ContributionCalendar from "./ContributionCalendar";
 import VisitorPulse from "./VisitorPulse";
+import { profile } from "@/data/profile";
+import { getContributionData } from "@/lib/githubContributions";
 
-export default function ActivitySection() {
+export default async function ActivitySection() {
+  const data = await getContributionData(profile.githubUsername);
+
   return (
     <Section index="03" kicker="Activity" title="By the numbers.">
-      <ContributionCalendar />
+      <ContributionCalendar data={data} username={profile.githubUsername} />
       <div className="mt-10">
         <VisitorPulse />
       </div>

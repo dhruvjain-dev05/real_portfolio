@@ -71,6 +71,10 @@ const ThemeToggle = () => {
     });
     const toRgb = (c: RGB) => `rgb(${c.r}, ${c.g}, ${c.b})`;
     let colorT = isDarkRef.current ? 1 : 0;
+    // scrolling gives the cord a tiny nudge, like walking past disturbs the
+    // air around it — same verlet engine as the drag interaction, just one
+    // more small force feeding into it each frame
+    let lastScrollY = window.scrollY;
 
     const getPoint = (e: PointerEvent | MouseEvent | TouchEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -157,13 +161,25 @@ const ThemeToggle = () => {
     let animationId: number;
 
     const render = () => {
-      points.current.forEach((p) => {
+      const scrollY = window.scrollY;
+      const scrollDelta = scrollY - lastScrollY;
+      lastScrollY = scrollY;
+      // clamped so a fast fling-scroll can't throw the cord into chaotic
+      // motion — this should read as barely-there, not as a puppet show
+      const swayForce = clamp(scrollDelta * 0.015, -1.2, 1.2);
+      const pointCount = points.current.length;
+
+      points.current.forEach((p, i) => {
         if (p.pinned) return;
         if (mouse.current.down && mouse.current.target === p) {
           p.x = clamp(mouse.current.x, 10, worldWidth - 10);
           p.y = clamp(mouse.current.y, 6, worldHeight - 10);
         } else {
-          const vx = (p.x - p.oldX) * friction;
+          // the free end (near the toggle) swings more than the segments
+          // still close to the pinned ceiling mount — a real hanging cord
+          // doesn't sway uniformly along its length
+          const swayT = i / (pointCount - 1);
+          const vx = (p.x - p.oldX) * friction + swayForce * swayT;
           const vy = (p.y - p.oldY) * friction;
           p.oldX = p.x;
           p.oldY = p.y;

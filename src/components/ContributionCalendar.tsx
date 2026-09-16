@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import type { ContributionData } from "@/lib/githubContributions";
 
 const LEVEL_COLORS = [
   "var(--cal-level-0)",
@@ -10,67 +11,56 @@ const LEVEL_COLORS = [
   "var(--cal-level-4)",
 ];
 
-function seededRandom(seed: number) {
-  const x = Math.sin(seed) * 10000;
-  return x - Math.floor(x);
+function formatDate(isoDate: string) {
+  return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 }
 
-function levelFor(count: number) {
-  if (count === 0) return 0;
-  if (count <= 2) return 1;
-  if (count <= 5) return 2;
-  if (count <= 9) return 3;
-  return 4;
-}
-
-export default function ContributionCalendar({ weeks = 52 }: { weeks?: number }) {
+export default function ContributionCalendar({
+  data,
+  username,
+}: {
+  data: ContributionData | null;
+  username: string;
+}) {
   const [hovered, setHovered] = useState<{ date: string; count: number; x: number; y: number } | null>(null);
 
-  const { grid, total, months } = useMemo(() => {
-    const today = new Date();
-    const days: { date: Date; count: number }[] = [];
-    const totalDays = weeks * 7;
+  // real GitHub data failed to load — an honest gap beats a fake graph
+  if (!data) {
+    return (
+      <p className="font-mono text-[0.75rem] text-text-dim">
+        Couldn&apos;t load live activity from GitHub right now —{" "}
+        <a
+          href={`https://github.com/${username}`}
+          target="_blank"
+          rel="noreferrer"
+          className="underline decoration-text-ghost underline-offset-2 transition-colors hover:text-text-primary"
+        >
+          see it directly on GitHub
+        </a>
+        .
+      </p>
+    );
+  }
 
-    for (let i = totalDays - 1; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      const seed = date.getFullYear() * 10000 + date.getMonth() * 100 + date.getDate();
-      const r = seededRandom(seed);
-      const count = r > 0.35 ? Math.floor(r * 12) : 0;
-      days.push({ date, count });
-    }
-
-    const grid: { date: Date; count: number }[][] = [];
-    for (let w = 0; w < weeks; w++) {
-      grid.push(days.slice(w * 7, w * 7 + 7));
-    }
-
-    const monthLabels: { label: string; weekIdx: number }[] = [];
-    let lastMonth = -1;
-    grid.forEach((week, wi) => {
-      const firstDay = week[0].date;
-      if (firstDay.getMonth() !== lastMonth) {
-        monthLabels.push({ label: firstDay.toLocaleDateString("en-US", { month: "short" }), weekIdx: wi });
-        lastMonth = firstDay.getMonth();
-      }
-    });
-
-    const total = days.reduce((sum, d) => sum + d.count, 0);
-
-    return { grid, total, months: monthLabels };
-  }, [weeks]);
+  const { weeks, months, total } = data;
+  const weekCount = weeks.length;
 
   // one shared column grid (one column per week) drives both the month-label
   // row and the day cells below, so both always stay aligned and both
   // stretch fluidly to fill the full container width — no fixed pixel math.
   // 10px minimum keeps cells legible; below that the grid overflows into
   // the horizontal scroll container instead of shrinking further.
-  const columnsStyle = { gridTemplateColumns: `repeat(${weeks}, minmax(10px, 1fr))` };
+  const columnsStyle = { gridTemplateColumns: `repeat(${weekCount}, minmax(10px, 1fr))` };
 
   return (
     <div>
       {/* labels and grid scroll together — required once the 10px-per-cell
-          floor is hit on narrow screens (52 weeks won't fit otherwise) */}
+          floor is hit on narrow screens */}
       <div className="overflow-x-auto">
         <div
           className="mb-1.5 grid font-mono text-[0.62rem] text-text-dim"
@@ -88,17 +78,17 @@ export default function ContributionCalendar({ weeks = 52 }: { weeks?: number })
         </div>
 
         <div className="relative grid gap-[3px]" style={columnsStyle}>
-          {grid.map((week, wi) => (
+          {weeks.map((week, wi) => (
             <div key={wi} className="grid gap-[3px]" style={{ gridColumnStart: wi + 1 }}>
               {week.map((day, di) => (
                 <div
                   key={di}
                   className="aspect-square w-full cursor-pointer rounded-[2px]"
-                  style={{ backgroundColor: LEVEL_COLORS[levelFor(day.count)] }}
+                  style={{ backgroundColor: LEVEL_COLORS[day.level] }}
                   onMouseEnter={(e) => {
                     const rect = (e.target as HTMLElement).getBoundingClientRect();
                     setHovered({
-                      date: day.date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+                      date: formatDate(day.date),
                       count: day.count,
                       x: rect.left,
                       y: rect.top,

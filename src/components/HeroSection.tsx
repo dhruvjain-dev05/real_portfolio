@@ -1,59 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { motion, animate } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { profile } from "@/data/profile";
 import { heroSocialLinks } from "@/data/socialLinks";
-import { HiOutlineMail, HiOutlineEye } from "react-icons/hi";
+import { HiOutlineMail } from "react-icons/hi";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
-import { generateSeries, summarize } from "@/data/analytics";
-
-// same underlying number as the Activity section's visitor stat — this
-// badge isn't a separate invented metric, just a glance at the same data
-function ViewCount() {
-  const total = useMemo(() => summarize(generateSeries("7d")).visitors, []);
-  const [display, setDisplay] = useState(0);
-
-  useEffect(() => {
-    const controls = animate(0, total, {
-      duration: 1.1,
-      delay: 0.4,
-      ease: "easeOut",
-      onUpdate: (v) => setDisplay(Math.round(v)),
-    });
-    return controls.stop;
-  }, [total]);
-
-  return (
-    <div className="ml-auto hidden shrink-0 items-center gap-1.5 self-start font-mono text-[0.75rem] text-text-dim sm:flex">
-      <HiOutlineEye size={14} />
-      <span>{display.toLocaleString()}</span>
-    </div>
-  );
-}
-
-function useClock() {
-  const [time, setTime] = useState("");
-
-  useEffect(() => {
-    const update = () =>
-      setTime(
-        new Date().toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: true,
-        })
-      );
-    update();
-    const id = setInterval(update, 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  return time;
-}
+import RotatingRole from "@/components/RotatingRole";
+import MumbaiClock from "@/components/MumbaiClock";
+import BannerDayMarker from "@/components/BannerDayMarker";
 
 // opacity never starts at 0 here — this must stay visible even if JS is
 // slow, blocked, or never hydrates (crawlers, screenshot tools, bad networks)
@@ -63,8 +19,6 @@ const fadeUp = {
 };
 
 export default function HeroSection() {
-  const time = useClock();
-
   return (
     <motion.section
       className="pt-6 pb-10 md:pt-8 md:pb-12"
@@ -109,7 +63,7 @@ export default function HeroSection() {
             </span>
           </div>
         )}
-
+        {profile.bannerVideo && <BannerDayMarker />}
       </motion.div>
 
       {/* Sits entirely BELOW the banner — no overlap. "mt-6" is the gap
@@ -158,10 +112,11 @@ export default function HeroSection() {
             {profile.name}
           </h1>
 
-          <p className="mt-1 text-[0.95rem] font-medium text-text-secondary">{profile.role}</p>
+          <RotatingRole
+            roles={profile.roles}
+            className="mt-1 text-[0.95rem] font-medium text-text-secondary"
+          />
         </div>
-
-        <ViewCount />
       </motion.div>
 
       <motion.p
@@ -171,7 +126,7 @@ export default function HeroSection() {
       >
         <span>{profile.location}</span>
         <span className="text-text-ghost">/</span>
-        <span>{time}</span>
+        <MumbaiClock />
         <span className="text-text-ghost">/</span>
         <a
           href={profile.statusUrl}

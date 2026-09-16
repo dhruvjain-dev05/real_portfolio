@@ -281,3 +281,23 @@ body {
     transform: translateY(0) scale(1);
   }
 }
+
+/* stat chip badges — inline pill tags used in bio bullets */
+.stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 8px;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+  border: 1px solid var(--border-default);
+  color: var(--text-muted);
+  white-space: nowrap;
+  vertical-align: middle;
+  margin-left: 3px;
+  font-family: var(--font-jetbrains-mono), "Courier New", monospace;
+}
+

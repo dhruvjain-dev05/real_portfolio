@@ -14,7 +14,7 @@ export default function Section({
 }) {
   return (
     <motion.section
-      className="border-t border-rule py-12 md:py-16"
+      className="border-t border-dashed border-rule-strong py-12 md:py-16"
       initial={{ y: 16 }}
       whileInView={{ y: 0 }}
       viewport={{ once: true, margin: "-80px" }}

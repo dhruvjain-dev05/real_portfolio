@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import {
   Popover,
   PopoverTrigger,
@@ -30,10 +31,21 @@ export default function NameOrigin() {
           onMouseEnter={openNow}
           onMouseLeave={closeSoon}
           onClick={() => setOpen((o) => !o)}
-          className="hidden shrink-0 font-display text-2xl text-text-display transition-opacity hover:opacity-80 sm:block"
+          className="flex shrink-0 items-center gap-2 transition-opacity hover:opacity-80"
           aria-label={`Where the name "${profile.brandName}" comes from`}
         >
-          {profile.brandName}
+          {profile.avatarSketch && (
+            <Image
+              src={profile.avatarSketch}
+              alt=""
+              aria-hidden
+              width={64}
+              height={64}
+              unoptimized
+              className="h-7 w-7 shrink-0 rounded-full ring-1 ring-rule"
+            />
+          )}
+          <span className="font-display text-2xl text-text-display">{profile.brandName}</span>
         </button>
       </PopoverTrigger>
 
@@ -52,9 +64,9 @@ export default function NameOrigin() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -4, scale: 0.97 }}
               transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-              className="w-[248px] px-4 py-4"
+              className="w-[276px] px-4 py-4"
             >
-              <p className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-text-ghost">
+              <p className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-text-dim">
                 The name
               </p>
 
@@ -80,7 +92,9 @@ export default function NameOrigin() {
 
               <p className="mt-3 text-center text-[0.75rem] leading-relaxed text-text-muted">
                 My parents&apos; names, folded into one — the closest thing I have to a
-                signature.
+                signature. No matter what else ever happens in my life, this already did
+                — I got them as my parents. Nothing I ever become will matter more than
+                that.
               </p>
               <PopoverArrow className="fill-bg-surface-elevated" />
             </motion.div>
