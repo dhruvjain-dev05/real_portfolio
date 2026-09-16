@@ -74,27 +74,17 @@ export default function HeroSection() {
         className="mt-6 flex items-center gap-5"
       >
         <div className="h-[96px] w-[96px] shrink-0 overflow-hidden rounded-xl bg-bg-surface shadow-sm ring-1 ring-rule sm:h-[112px] sm:w-[112px]">
-          {profile.avatar ? (
-            <>
-              {/* identical photo — only the backdrop differs per theme */}
-              <Image
-                src={profile.avatarLight}
-                alt={profile.name}
-                width={132}
-                height={132}
-                unoptimized
-                className="h-full w-full object-cover dark:hidden"
-              />
-              <Image
-                src={profile.avatar}
-                alt=""
-                aria-hidden
-                width={132}
-                height={132}
-                unoptimized
-                className="hidden h-full w-full object-cover dark:block"
-              />
-            </>
+          {profile.avatarSketch ? (
+            // illustrated mark — same box, frame, and size as the real photo
+            // used to have here; only the image swapped
+            <Image
+              src={profile.avatarSketch}
+              alt={profile.name}
+              width={320}
+              height={320}
+              unoptimized
+              className="h-full w-full object-cover"
+            />
           ) : (
             <div className="grid h-full w-full place-items-center bg-bg-surface-elevated">
               <span className="font-display text-4xl text-text-dim">

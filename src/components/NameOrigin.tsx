@@ -34,16 +34,30 @@ export default function NameOrigin() {
           className="flex shrink-0 items-center gap-2 transition-opacity hover:opacity-80"
           aria-label={`Where the name "${profile.brandName}" comes from`}
         >
-          {profile.avatarSketch && (
-            <Image
-              src={profile.avatarSketch}
-              alt=""
-              aria-hidden
-              width={64}
-              height={64}
-              unoptimized
-              className="h-7 w-7 shrink-0 rounded-full ring-1 ring-rule"
-            />
+          {profile.avatar && (
+            <>
+              {/* real photo, small — same frame/size this slot always had;
+                  only the image swapped, matching the theme pair used in
+                  the hero previously */}
+              <Image
+                src={profile.avatarLight}
+                alt=""
+                aria-hidden
+                width={64}
+                height={64}
+                unoptimized
+                className="h-7 w-7 shrink-0 rounded-full ring-1 ring-rule dark:hidden"
+              />
+              <Image
+                src={profile.avatar}
+                alt=""
+                aria-hidden
+                width={64}
+                height={64}
+                unoptimized
+                className="hidden h-7 w-7 shrink-0 rounded-full ring-1 ring-rule dark:block"
+              />
+            </>
           )}
           <span className="font-display text-2xl text-text-display">{profile.brandName}</span>
         </button>
