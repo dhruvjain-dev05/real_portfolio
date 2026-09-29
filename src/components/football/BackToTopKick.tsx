@@ -21,7 +21,9 @@ import {
 } from "./sprite";
 
 // "Back to top", with a footballer. When the footer comes into view he
-// dribbles in beside the button; pressing it makes him boot the ball straight
+// dribbles in beside the button and offers, in a small speech bubble, to pass
+// you back up; hovering the button sets him up for the strike. Pressing it (or
+// the bubble) makes him boot the ball straight
 // up — the page scrolls after it, and the ball drops back onto the hero
 // banner, bounces, rolls and fades. Once the footer is left behind he resets,
 // ready to run in with a fresh ball next time.
@@ -30,6 +32,9 @@ const { w: W, h: H, ball: D } = size(62);
 const REST_BALL_X = -16 - D / 2; // ball centre, px from the button's left edge
 const SPOT = REST_BALL_X - REST_X * W; // his cell's left edge when on the ball
 const ENTER_FROM = SPOT - 150;
+const HEAD_X = SPOT + 0.486 * W; // the bubble's tail points here
+const BUBBLE_LEFT = SPOT - 12;
+const LINE = "Need an assist? I'll pass you back to the top.";
 const GRAVITY = 2600;
 
 type State = "away" | "entering" | "ready" | "kicking" | "spent";
@@ -40,7 +45,10 @@ export default function BackToTopKick() {
   const spriteRef = useRef<HTMLDivElement>(null);
   const restRef = useRef<HTMLDivElement>(null);
   const flyRef = useRef<HTMLDivElement>(null);
+  const bubbleRef = useRef<HTMLDivElement>(null);
+  const typedRef = useRef<HTMLSpanElement>(null);
   const kickRef = useRef<() => void>(() => {});
+  const primeRef = useRef<(on: boolean) => void>(() => {});
 
   useEffect(() => {
     const wrap = wrapRef.current!;
@@ -48,6 +56,8 @@ export default function BackToTopKick() {
     const sprite = spriteRef.current!;
     const rest = restRef.current!;
     const fly = flyRef.current!;
+    const bubble = bubbleRef.current!;
+    const typed = typedRef.current!;
     applySprite(sprite, W, H);
     applyBall(rest, D);
     applyBall(fly, D);
@@ -58,6 +68,8 @@ export default function BackToTopKick() {
     let look: ReturnType<typeof setTimeout> | undefined;
     const timers: ReturnType<typeof setTimeout>[] = [];
     let stopScroll = () => {};
+    let primed = false;
+    let typing: ReturnType<typeof setTimeout> | undefined;
 
     const place = (left: number) => (player.style.transform = `translate3d(${left}px,0,0)`);
     const putBall = (x: number, rot = 0) =>
@@ -66,12 +78,33 @@ export default function BackToTopKick() {
       player.style.opacity = rest.style.opacity = on ? "1" : "0";
     };
 
+    // the offer, typed out a character at a time
+    const showBubble = () => {
+      bubble.style.opacity = "1";
+      bubble.style.translate = "0 0";
+      bubble.style.pointerEvents = "auto";
+      let i = 0;
+      const type = () => {
+        typed.textContent = LINE.slice(0, ++i);
+        if (i < LINE.length) typing = setTimeout(type, LINE[i - 1] === "?" ? 260 : 26);
+      };
+      type();
+    };
+    const hideBubble = () => {
+      clearTimeout(typing);
+      bubble.style.opacity = "0";
+      bubble.style.translate = "0 4px";
+      bubble.style.pointerEvents = "none";
+    };
+
     // standing about: a glance around every few seconds
     const scheduleLook = () => {
       clearTimeout(look);
       look = setTimeout(() => {
-        if (state !== "ready") return;
-        LOOK.forEach((f, i) => timers.push(setTimeout(() => state === "ready" && showFrame(sprite, f, W), i * 150)));
+        if (state !== "ready" || primed) return;
+        LOOK.forEach((f, i) =>
+          timers.push(setTimeout(() => state === "ready" && !primed && showFrame(sprite, f, W), i * 150))
+        );
         scheduleLook();
       }, 5000 + Math.random() * 4000);
     };
@@ -91,13 +124,27 @@ export default function BackToTopKick() {
         else {
           state = "ready";
           scheduleLook();
+          timers.push(setTimeout(() => state === "ready" && showBubble(), 250));
         }
       };
       raf = requestAnimationFrame(step);
     };
 
+    // hovering the button: he steps into the first kick frame, which draws
+    // the ball in exactly the same spot, so ours steps aside for it
+    primeRef.current = (on) => {
+      if (state !== "ready" || primed === on) return;
+      primed = on;
+      rest.style.transition = "none";
+      rest.style.opacity = on ? "0" : "1";
+      showFrame(sprite, on ? KICK[0] : 0, W);
+    };
+
     const reset = () => {
       state = "away";
+      primed = false;
+      hideBubble();
+      typed.textContent = "";
       rest.style.transition = "";
       visible(false);
       showFrame(sprite, 0, W);
@@ -217,7 +264,9 @@ export default function BackToTopKick() {
       }
       cancelAnimationFrame(raf);
       clearTimeout(look);
+      hideBubble();
       state = "kicking";
+      primed = false;
       putBall(REST_BALL_X);
 
       // strike: the kick frames draw their own ball, so ours hands over
@@ -262,13 +311,14 @@ export default function BackToTopKick() {
       cancelAnimationFrame(raf);
       cancelAnimationFrame(flightRaf);
       clearTimeout(look);
+      clearTimeout(typing);
       timers.forEach(clearTimeout);
       stopScroll();
     };
   }, []);
 
   return (
-    <div ref={wrapRef} className="relative mt-9 inline-flex">
+    <div ref={wrapRef} className="relative mt-[6.5rem] inline-flex">
       <div
         ref={playerRef}
         aria-hidden
@@ -282,11 +332,46 @@ export default function BackToTopKick() {
         aria-hidden
         className="pointer-events-none absolute bottom-0 left-0 opacity-0 transition-opacity duration-200"
       />
+      {/* the offer — tail points at him, the little arrow at the button */}
+      <div
+        ref={bubbleRef}
+        aria-hidden
+        onClick={() => kickRef.current()}
+        className="pointer-events-none absolute z-10 w-[172px] cursor-pointer rounded-lg border border-dashed border-rule-strong bg-bg-surface-elevated px-2.5 py-1.5 text-left font-mono text-[0.62rem] leading-[1.5] text-text-secondary opacity-0 shadow-sm transition-[opacity,translate] duration-300 ease-out"
+        style={{ left: BUBBLE_LEFT, bottom: H + 12, translate: "0 4px" }}
+      >
+        <span className="invisible">{LINE}</span>
+        <span ref={typedRef} className="absolute inset-x-2.5 top-1.5" />
+        <span
+          className="absolute -bottom-[5.5px] h-2.5 w-2.5 rotate-45 border-b border-r border-dashed border-rule-strong bg-bg-surface-elevated"
+          style={{ left: HEAD_X - BUBBLE_LEFT - 5 }}
+        />
+        <svg
+          className="absolute top-full text-text-dim"
+          style={{ left: -BUBBLE_LEFT - 14 }}
+          width="30"
+          height="40"
+          viewBox="0 0 30 40"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M3 3 C 4 18, 11 29, 25 34" strokeDasharray="2.5 2.5" />
+          <path d="M19.5 29.5 L 25.5 34 L 19 37" />
+        </svg>
+      </div>
+
       <div ref={flyRef} aria-hidden className="pointer-events-none fixed left-0 top-0 z-[1001] opacity-0" />
 
       <button
         type="button"
         onClick={() => kickRef.current()}
+        onPointerEnter={(e) => e.pointerType === "mouse" && primeRef.current(true)}
+        onPointerLeave={() => primeRef.current(false)}
+        onFocus={() => primeRef.current(true)}
+        onBlur={() => primeRef.current(false)}
         className="group inline-flex items-center gap-2 rounded-full border border-dashed border-rule-strong px-4 py-1.5 font-mono text-[0.7rem] text-text-muted transition-colors hover:border-solid hover:border-text-ghost hover:text-text-primary"
       >
         Back to top

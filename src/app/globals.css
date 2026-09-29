@@ -420,7 +420,7 @@ body {
 /* kick-off intro — layout.tsx's pre-paint script sets html[data-kickoff] so
    this cover is painted before anything else; KickoffIntro takes over from it
    ("live"), and the page may scroll again once the reveal starts. The cover
-   hides itself after 6s in case the script ran but the app never hydrated. */
+   hides itself after 8s in case the script ran but the app never hydrated. */
 html[data-kickoff]:not([data-kickoff="reveal"]) {
   overflow: hidden;
 }
@@ -430,7 +430,7 @@ html[data-kickoff=""]::before {
   inset: 0;
   z-index: 1003;
   background: var(--bg-primary);
-  animation: kickoff-failsafe 0s linear 6s forwards;
+  animation: kickoff-failsafe 0s linear 8s forwards;
 }
 @keyframes kickoff-failsafe {
   to { visibility: hidden; }

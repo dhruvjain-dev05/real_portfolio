@@ -23,7 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const KICKOFF_SCRIPT = `(function(){try{var f=/[?&]kickoff\b/.test(location.search);if(!f&&(location.pathname!=="/"||sessionStorage.getItem("jyora:kickoff")||matchMedia("(prefers-reduced-motion: reduce)").matches))return;window.__jyoraKickoff=true;document.documentElement.setAttribute("data-kickoff","");var l=document.createElement("link");l.rel="preload";l.as="image";l.href="/sprites/footballer.webp";document.head.appendChild(l)}catch(e){}})()`;
+const KICKOFF_SCRIPT = `(function(){try{var f=/[?&]kickoff\b/.test(location.search);if(!f&&(location.pathname!=="/"||sessionStorage.getItem("jyora:kickoff")))return;window.__jyoraKickoff=true;document.documentElement.setAttribute("data-kickoff","");var l=document.createElement("link");l.rel="preload";l.as="image";l.href="/sprites/footballer.webp";document.head.appendChild(l)}catch(e){}})()`;
 
 export const metadata: Metadata = {
   title: "Dhruv Jain | Software Engineer",
@@ -42,7 +42,7 @@ export default function RootLayout({
     >
       <head>
         {/* decides, before first paint, whether the kick-off intro plays
-            (first home visit of the session, motion allowed; /?kickoff forces it) */}
+            (first home visit of the session, on every device; /?kickoff replays it) */}
         <script dangerouslySetInnerHTML={{ __html: KICKOFF_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col bg-bg-primary text-text-primary">
