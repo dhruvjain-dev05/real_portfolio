@@ -34,7 +34,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 bg-bg-primary/80 backdrop-blur-md">
-      <nav className="mx-auto flex max-w-[800px] items-center gap-6 px-5 py-4 md:px-6">
+      <nav className="mx-auto flex max-w-[800px] items-center gap-6 border-b border-dashed border-rule-strong px-5 py-4 md:px-6">
         <NameOrigin />
 
         {/* scrolls itself on very narrow phones rather than widening the page */}

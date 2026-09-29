@@ -21,8 +21,8 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="mx-auto w-full max-w-[800px] px-5 pb-14 md:px-6">
-      <div className="flex flex-wrap items-baseline justify-between gap-3 border-t border-rule pt-8">
+    <footer className="mx-auto w-full max-w-[800px] pb-14">
+      <div className="flex flex-wrap items-baseline justify-between gap-3 border-t border-dashed border-rule-strong px-5 pt-8 md:px-6">
         <p className="font-display text-[0.95rem] italic text-text-muted">
           Nothing is perfect — but you can make it better.
         </p>

@@ -21,7 +21,7 @@ export default function Section({
   return (
     <motion.section
       id={id}
-      className={`scroll-mt-24 border-t border-dashed border-rule-strong py-12 md:py-16 ${className}`}
+      className={`scroll-mt-24 -mx-5 border-t border-dashed border-rule-strong px-5 py-12 md:-mx-6 md:px-6 md:py-16 ${className}`}
       initial={{ y: 16 }}
       whileInView={{ y: 0 }}
       viewport={{ once: true, margin: "-80px" }}

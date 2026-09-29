@@ -311,3 +311,60 @@ body {
   font-family: var(--font-jetbrains-mono), "Courier New", monospace;
 }
 
+
+/* cursor-following glow on cards — position comes from lib/spotlight.ts.
+   ::before is the soft fill, ::after is a border that lights up near the
+   pointer (a ring cut out with a mask). */
+.spotlight::before,
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+.spotlight::before {
+  background: radial-gradient(
+    320px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--text-primary) 9%, transparent),
+    transparent 70%
+  );
+}
+.spotlight::after {
+  padding: 1px;
+  background: radial-gradient(
+    220px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--text-primary) 55%, transparent),
+    transparent 70%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.spotlight:hover::before,
+.spotlight:hover::after {
+  opacity: 1;
+}
+
+/* dot grid revealed around the cursor, aligned to the 800px content column */
+.dot-spotlight {
+  position: fixed;
+  inset: 0 auto 0 50%;
+  width: 100%;
+  max-width: 800px;
+  transform: translateX(-50%);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background-image: radial-gradient(var(--text-ghost) 1px, transparent 1.2px);
+  background-size: 20px 20px;
+  -webkit-mask-image: radial-gradient(260px circle at var(--gx, 50%) var(--gy, 50%), #000, transparent 100%);
+  mask-image: radial-gradient(260px circle at var(--gx, 50%) var(--gy, 50%), #000, transparent 100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dot-spotlight { display: none; }
+}

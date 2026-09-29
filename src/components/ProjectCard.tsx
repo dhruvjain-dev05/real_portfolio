@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FaGithub } from "react-icons/fa6";
 import { HiOutlineExternalLink } from "react-icons/hi";
 import { Button } from "@/components/ui/button";
+import { spotlightMove } from "@/lib/spotlight";
 import type { ProjectData } from "@/data/projects";
 
 export default function ProjectCard({ project }: { project: ProjectData }) {
@@ -17,9 +18,10 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
       className="group"
     >
       <motion.div
+        onMouseMove={spotlightMove}
         whileHover={{ y: -3 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
-        className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-bg-surface ring-1 ring-rule"
+        className="spotlight relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-bg-surface ring-1 ring-rule"
       >
         {project.banner ? (
           <Image
