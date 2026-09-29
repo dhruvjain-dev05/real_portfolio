@@ -41,12 +41,10 @@ function SkillTile({
         onMouseMove={spotlightMove}
         whileHover={{ y: -3 }}
         transition={{ duration: 0.2, ease: "easeOut" }}
-        className="spotlight relative flex items-center gap-2.5 rounded-xl border border-dashed border-rule-strong bg-bg-surface px-3.5 py-2.5 text-text-primary transition-colors hover:border-solid hover:border-text-ghost"
+        className="spotlight relative flex items-center gap-2 rounded-lg border border-dashed border-rule-strong bg-bg-surface px-2.5 py-1.5 text-text-primary transition-colors hover:border-solid hover:border-text-ghost"
       >
-        <span className="relative z-[2] grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-bg-primary ring-1 ring-rule">
-          <item.icon size={15} style={{ color: item.color }} />
-        </span>
-        <span className="relative z-[2] whitespace-nowrap text-[0.83rem] text-text-secondary">
+        <item.icon size={14} style={{ color: item.color }} className="relative z-[2] shrink-0" />
+        <span className="relative z-[2] whitespace-nowrap text-[0.78rem] text-text-secondary">
           {item.name}
         </span>
       </motion.div>
@@ -58,7 +56,7 @@ export default function SkillSection() {
   const [active, setActive] = useState(ALL);
 
   return (
-    <Section id="stack" index="01" kicker="Skills" title="Tools of the trade.">
+    <Section id="stack" index="01" kicker="Skills" title="Tools of the trade." compact className="!py-8 md:!py-10">
       <div
         role="tablist"
         aria-label="Skill categories"
@@ -72,7 +70,7 @@ export default function SkillSection() {
               role="tab"
               aria-selected={selected}
               onClick={() => setActive(tab.label)}
-              className={`relative shrink-0 rounded-lg px-3 py-1.5 text-[0.8rem] transition-colors ${
+              className={`relative shrink-0 rounded-lg px-2.5 py-1 text-[0.78rem] transition-colors ${
                 selected ? "text-text-display" : "text-text-muted hover:text-text-primary"
               }`}
             >
@@ -92,7 +90,7 @@ export default function SkillSection() {
         })}
       </div>
 
-      <ul className="mt-4 flex flex-wrap content-start gap-2.5">
+      <ul className="mt-3 flex flex-wrap content-start gap-2">
         {skillGroups.flatMap((g) =>
           g.items.map((item) => {
             const lit = active === ALL || active === g.label;

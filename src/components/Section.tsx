@@ -8,6 +8,7 @@ export default function Section({
   title,
   action,
   className = "",
+  compact,
   children,
 }: {
   id?: string;
@@ -16,6 +17,8 @@ export default function Section({
   title?: React.ReactNode;
   action?: React.ReactNode;
   className?: string;
+  // smaller heading and tighter gaps, for sections that should stay short
+  compact?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -35,7 +38,11 @@ export default function Section({
       </div>
 
       {title && (
-        <h2 className="mb-6 font-display text-[clamp(1.9rem,4.2vw,2.5rem)] text-text-display">
+        <h2
+          className={`font-display text-text-display ${
+            compact ? "mb-4 text-[clamp(1.35rem,3vw,1.7rem)]" : "mb-6 text-[clamp(1.9rem,4.2vw,2.5rem)]"
+          }`}
+        >
           {title}
         </h2>
       )}
