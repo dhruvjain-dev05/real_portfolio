@@ -141,6 +141,17 @@ const ThemeToggle = () => {
       if (e?.cancelable) e.preventDefault();
     };
 
+    // lets other UI (the command menu) flip the theme through the same state
+    const onExternalToggle = () => {
+      setIsDark((prev) => {
+        const next = !prev;
+        isDarkRef.current = next;
+        document.documentElement.classList.toggle("dark", next);
+        return next;
+      });
+    };
+    window.addEventListener("jyora:toggle-theme", onExternalToggle);
+
     const supportsPointer = "PointerEvent" in window;
     if (supportsPointer) {
       // listener lives on window, not the canvas, so the canvas can stay
@@ -295,6 +306,7 @@ const ThemeToggle = () => {
     render();
     return () => {
       cancelAnimationFrame(animationId);
+      window.removeEventListener("jyora:toggle-theme", onExternalToggle);
 
       if (supportsPointer) {
         window.removeEventListener("pointerdown", onPointerDown);

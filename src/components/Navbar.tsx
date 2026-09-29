@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NameOrigin from "@/components/NameOrigin";
 import CommandMenu from "@/components/CommandMenu";
+import { FaGithub } from "react-icons/fa6";
+import { profile } from "@/data/profile";
 
 const links = [
   { href: "/", label: "Home" },
@@ -34,7 +36,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 bg-bg-primary/80 backdrop-blur-md">
-      <nav className="mx-auto flex max-w-[800px] items-center gap-6 border-b border-dashed border-rule-strong px-5 py-4 md:px-6">
+      <nav className="mx-auto flex max-w-[800px] items-center gap-4 sm:gap-6 border-b border-dashed border-rule-strong px-5 py-4 md:px-6">
         <NameOrigin />
 
         {/* scrolls itself on very narrow phones rather than widening the page */}
@@ -61,7 +63,47 @@ export default function Navbar() {
           })}
         </ul>
 
-        <CommandMenu />
+        {/* Right header cluster: Status badge + GitHub + Search */}
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-2.5">
+          {/* Status pill: Open to work / Get in touch with blinking live dot */}
+          <Link
+            href="/#contact"
+            title="Open to work — Get in touch"
+            aria-label="Open to work — Get in touch"
+            className="group hidden h-9 items-center gap-2 rounded-full bg-bg-surface-subtle px-3 text-[0.76rem] font-medium text-text-secondary ring-1 ring-rule transition-colors hover:bg-bg-surface hover:text-text-primary hover:ring-border-hover min-[580px]:inline-flex"
+          >
+            <span
+              aria-hidden
+              className="status-dot-glow live-pulse-dot h-1.5 w-1.5 shrink-0 rounded-full bg-status-active text-status-active"
+            />
+            <span className="relative flex items-center">
+              <span className="invisible select-none opacity-0" aria-hidden>
+                Get in touch ↗
+              </span>
+              <span className="absolute inset-0 flex items-center transition-all duration-200 ease-out group-hover:-translate-y-full group-hover:opacity-0">
+                Open to work
+              </span>
+              <span className="absolute inset-0 flex items-center gap-0.5 translate-y-full opacity-0 transition-all duration-200 ease-out group-hover:translate-y-0 group-hover:opacity-100 text-text-primary">
+                Get in touch <span>↗</span>
+              </span>
+            </span>
+          </Link>
+
+          {/* GitHub icon button */}
+          <a
+            href={`https://github.com/${profile.githubUsername}`}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="GitHub Profile"
+            title={`GitHub (@${profile.githubUsername})`}
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-text-muted ring-1 ring-rule transition-colors hover:text-text-primary hover:ring-border-hover"
+          >
+            <FaGithub size={15} />
+          </a>
+
+          {/* Command Menu (Search with shortcut) */}
+          <CommandMenu />
+        </div>
       </nav>
     </header>
   );

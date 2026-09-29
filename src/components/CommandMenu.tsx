@@ -18,6 +18,7 @@ import {
   HiOutlineDocumentDownload,
   HiOutlineMoon,
   HiCheck,
+  HiX,
   HiOutlineExternalLink,
 } from "react-icons/hi";
 import { profile } from "@/data/profile";
@@ -65,6 +66,17 @@ export default function CommandMenu() {
 
   // false on the server and during hydration, the real value right after
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
+
+  const [shortcutKey, setShortcutKey] = useState("⌘K");
+
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      !/Mac|iPod|iPhone|iPad/i.test(navigator.userAgent)
+    ) {
+      setShortcutKey("Ctrl K");
+    }
+  }, []);
   
   const openMenu = useCallback(() => {
     returnFocus.current = document.activeElement as HTMLElement | null;
@@ -92,6 +104,20 @@ export default function CommandMenu() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, openMenu, closeMenu]);
+
+  // Esc closes from anywhere — the input's own key handler only fires while it
+  // has focus, which it loses as soon as a row or the backdrop is clicked
+  useEffect(() => {
+    if (!open) return;
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeMenu();
+      }
+    };
+    window.addEventListener("keydown", onEsc);
+    return () => window.removeEventListener("keydown", onEsc);
+  }, [open, closeMenu]);
 
   // Lock body scroll behind the open palette, and unconditionally release on close/unmount
   useEffect(() => {
@@ -152,7 +178,6 @@ export default function CommandMenu() {
 
       ...(
         [
-          ["now", "Now"],
           ["stack", "Stack"],
           ["experience", "Experience"],
           ["projects", "Featured projects"],
@@ -267,9 +292,13 @@ export default function CommandMenu() {
         onClick={openMenu}
         aria-label="Open command menu"
         aria-haspopup="dialog"
-        className="ml-auto grid h-9 w-9 shrink-0 place-items-center rounded-full text-text-muted ring-1 ring-rule transition-colors hover:text-text-primary hover:ring-border-hover"
+        title={`Search (${shortcutKey})`}
+        className="group flex h-9 w-9 sm:w-auto shrink-0 items-center justify-center sm:justify-start sm:gap-2 rounded-full px-0 sm:px-2.5 text-text-muted ring-1 ring-rule transition-colors hover:text-text-primary hover:ring-border-hover"
       >
-        <HiOutlineSearch size={15} />
+        <HiOutlineSearch size={14} className="shrink-0" />
+        <kbd className="hidden sm:inline-flex items-center rounded border border-rule bg-bg-surface px-1.5 py-0.5 font-mono text-[0.6rem] text-text-dim transition-colors group-hover:text-text-secondary">
+          {shortcutKey}
+        </kbd>
       </button>
 
       {mounted &&
@@ -316,9 +345,17 @@ export default function CommandMenu() {
                         aria-activedescendant={ordered[active] ? `cmd-${ordered[active].id}` : undefined}
                         className="h-12 w-full bg-transparent text-[0.9rem] text-text-primary outline-none placeholder:text-text-dim"
                       />
-                      <kbd className="shrink-0 rounded-md border border-rule bg-bg-surface px-2 py-1 font-mono text-[0.6rem] uppercase text-text-muted">
+                      <kbd className="hidden shrink-0 rounded-md border border-rule bg-bg-surface px-2 py-1 font-mono text-[0.6rem] uppercase text-text-muted sm:block">
                         Esc
                       </kbd>
+                      <button
+                        type="button"
+                        onClick={closeMenu}
+                        aria-label="Close command menu"
+                        className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-text-muted ring-1 ring-rule transition-colors hover:text-text-primary hover:ring-border-hover"
+                      >
+                        <HiX size={14} />
+                      </button>
                     </div>
 
                     <div id="command-list" role="listbox" className="max-h-[min(360px,55vh)] overflow-y-auto p-2">

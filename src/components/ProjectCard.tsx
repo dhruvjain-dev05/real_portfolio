@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { FaGithub } from "react-icons/fa6";
 import { HiOutlineExternalLink } from "react-icons/hi";
@@ -9,8 +10,16 @@ import { spotlightMove } from "@/lib/spotlight";
 import type { ProjectData } from "@/data/projects";
 
 export default function ProjectCard({ project }: { project: ProjectData }) {
+  // preview drifts +-12px as the card crosses the viewport; the 1.08 scale
+  // keeps its edges from ever showing inside the frame
+  const ref = useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const parallaxY = useTransform(scrollYProgress, (v) => (reduce ? 0 : (v - 0.5) * 24));
+
   return (
     <motion.article
+      ref={ref}
       initial={{ y: 16 }}
       whileInView={{ y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
@@ -23,22 +32,24 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
         transition={{ duration: 0.25, ease: "easeOut" }}
         className="spotlight relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-bg-surface ring-1 ring-rule"
       >
-        {project.banner ? (
-          <Image
-            src={project.banner}
-            alt={project.name}
-            fill
-            unoptimized
-            sizes="700px"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-          />
-        ) : (
-          <div className="banner-placeholder grid h-full w-full place-items-center">
-            <span className="font-mono text-[0.6rem] uppercase tracking-[0.22em] text-text-ghost">
-              preview
-            </span>
-          </div>
-        )}
+        <motion.div className="absolute inset-0" style={{ y: parallaxY, scale: 1.08 }}>
+          {project.banner ? (
+            <Image
+              src={project.banner}
+              alt={project.name}
+              fill
+              unoptimized
+              sizes="700px"
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+            />
+          ) : (
+            <div className="banner-placeholder grid h-full w-full place-items-center">
+              <span className="font-mono text-[0.6rem] uppercase tracking-[0.22em] text-text-ghost">
+                preview
+              </span>
+            </div>
+          )}
+        </motion.div>
       </motion.div>
 
       <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
@@ -76,7 +87,7 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
         {project.desc}
       </p>
 
-      <p className="mt-3 font-mono text-[0.68rem] text-text-dim">
+      <p className="mt-3 font-mono text-[0.68rem] text-text-dim opacity-75 transition-[opacity,transform] duration-300 group-hover:translate-x-0.5 group-hover:opacity-100 motion-reduce:transform-none">
         {project.tech.join("  ·  ")}
       </p>
     </motion.article>

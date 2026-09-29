@@ -1,4 +1,5 @@
 import Section from "./Section";
+import Magnetic from "./Magnetic";
 import { profile } from "@/data/profile";
 import { socialLinks } from "@/data/socialLinks";
 
@@ -12,14 +13,18 @@ export default function ContactSection() {
         Open to interesting work and good conversations.
       </p>
 
-      <a
-        href={profile.email}
-        className="group mt-7 inline-block font-display text-[clamp(1.7rem,5vw,2.6rem)] text-text-display"
-      >
-        <span className="border-b-2 border-text-ghost pb-1 transition-colors duration-300 group-hover:border-text-display">
-          {address}
-        </span>
-      </a>
+      <Magnetic className="mt-7">
+        <a
+          href={profile.email}
+          className="group inline-block font-display text-[clamp(1.7rem,5vw,2.6rem)] text-text-display"
+        >
+          <span className="border-b-2 border-text-ghost pb-1 transition-colors duration-300 group-hover:border-text-display">
+            {address}
+          </span>
+        </a>
+      </Magnetic>
+
+
 
       <ul className="mt-10 flex flex-wrap gap-x-7 gap-y-3.5">
         {elsewhere.map((link) => (
