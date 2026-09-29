@@ -232,7 +232,12 @@ export default function CommandMenu() {
   }, [active]);
 
   const runCommand = (cmd: Command) => {
+    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
     setOpen(false);
+    if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
     cmd.run();
   };
 
@@ -273,16 +278,19 @@ export default function CommandMenu() {
             <AnimatePresence>
               {open && (
                 <motion.div
+                  key="command-palette-backdrop"
+                  style={{ pointerEvents: open ? "auto" : "none" }}
                   className="fixed inset-0 z-[1001] flex items-start justify-center bg-black/40 px-4 pt-[14vh] backdrop-blur-[2px]"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+                  exit={{ opacity: 0, pointerEvents: "none" }}
                   transition={{ duration: 0.15 }}
                   onMouseDown={(e) => {
                     if (e.target === e.currentTarget) closeMenu();
                   }}
                 >
                   <motion.div
+                    key="command-palette-dialog"
                     role="dialog"
                     aria-modal="true"
                     aria-label="Command menu"
@@ -388,6 +396,7 @@ export default function CommandMenu() {
             <AnimatePresence>
               {toast && (
                 <motion.div
+                  key="command-palette-toast"
                   role="status"
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NameOrigin from "@/components/NameOrigin";
@@ -15,6 +16,21 @@ const links = [
 
 export default function Navbar() {
   const pathname = usePathname();
+
+  useEffect(() => {
+    const handleHash = () => {
+      if (typeof window !== "undefined" && window.location.hash) {
+        const id = window.location.hash.slice(1);
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    };
+    handleHash();
+    const timer = setTimeout(handleHash, 150);
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   return (
     <header className="sticky top-0 z-50 bg-bg-primary/80 backdrop-blur-md">
