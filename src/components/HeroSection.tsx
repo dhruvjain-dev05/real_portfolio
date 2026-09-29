@@ -21,7 +21,8 @@ const fadeUp = {
 export default function HeroSection() {
   return (
     <motion.section
-      className="pt-6 pb-10 md:pt-8 md:pb-12"
+      id="now"
+      className="scroll-mt-24 pt-6 pb-10 md:pt-8 md:pb-12"
       initial="hidden"
       animate="show"
       variants={{ show: { transition: { staggerChildren: 0.08 } } }}

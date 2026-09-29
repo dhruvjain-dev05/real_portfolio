@@ -26,7 +26,7 @@ export default function ExperienceSection() {
   const tipTop = useTransform(scrollYProgress, [0, 1], ["0%", "100%"], { clamp: true });
 
   return (
-    <Section index="02" kicker="Experience" title="Where I've worked.">
+    <Section id="experience" index="02" kicker="Experience" title="Where I've worked.">
       <div ref={containerRef} className="relative pl-6">
         {/* static track */}
         <div className="absolute top-1.5 bottom-1.5 left-[3px] w-px bg-rule" aria-hidden />

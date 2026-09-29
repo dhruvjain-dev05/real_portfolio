@@ -7,7 +7,7 @@ export default function ContactSection() {
   const elsewhere = socialLinks.filter((l) => l.name !== "Email");
 
   return (
-    <Section index="06" kicker="Contact" title="Let's build something.">
+    <Section id="contact" index="06" kicker="Contact" title="Let's build something.">
       <p className="max-w-[48ch] text-[0.95rem] leading-[1.75] text-text-secondary">
         Open to interesting work and good conversations.
       </p>

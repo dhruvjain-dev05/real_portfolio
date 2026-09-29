@@ -3,26 +3,36 @@
 import { motion } from "framer-motion";
 
 export default function Section({
+  id,
   kicker,
   title,
+  action,
+  className = "",
   children,
 }: {
+  id?: string;
   index?: string;
   kicker: string;
   title?: React.ReactNode;
+  action?: React.ReactNode;
+  className?: string;
   children: React.ReactNode;
 }) {
   return (
     <motion.section
-      className="border-t border-dashed border-rule-strong py-12 md:py-16"
+      id={id}
+      className={`scroll-mt-24 border-t border-dashed border-rule-strong py-12 md:py-16 ${className}`}
       initial={{ y: 16 }}
       whileInView={{ y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      <p className="mb-4 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-text-dim">
-        <span className="corner-brackets">{kicker}</span>
-      </p>
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <p className="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-text-dim">
+          <span className="corner-brackets">{kicker}</span>
+        </p>
+        {action}
+      </div>
 
       {title && (
         <h2 className="mb-6 font-display text-[clamp(1.9rem,4.2vw,2.5rem)] text-text-display">

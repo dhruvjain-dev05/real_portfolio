@@ -52,7 +52,7 @@ function MarqueeRow({
 
 export default function SkillSection() {
   return (
-    <Section index="01" kicker="Skills" title="Tools of the trade.">
+    <Section id="stack" index="01" kicker="Skills" title="Tools of the trade.">
       <div className="space-y-8">
         <MarqueeRow
           label="Languages & frameworks"

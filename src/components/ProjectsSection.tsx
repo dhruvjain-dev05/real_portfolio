@@ -6,7 +6,7 @@ import { featuredProjects } from "@/data/projects";
 
 export default function ProjectsSection() {
   return (
-    <Section index="04" kicker="Projects" title="Things I've shipped.">
+    <Section id="projects" index="04" kicker="Projects" title="Things I've shipped.">
       <div className="space-y-12">
         {featuredProjects.map((project) => (
           <ProjectCard key={project.name} project={project} />

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NameOrigin from "@/components/NameOrigin";
+import CommandMenu from "@/components/CommandMenu";
 
 const links = [
   { href: "/", label: "Home" },
@@ -43,6 +44,8 @@ export default function Navbar() {
             );
           })}
         </ul>
+
+        <CommandMenu />
       </nav>
     </header>
   );
