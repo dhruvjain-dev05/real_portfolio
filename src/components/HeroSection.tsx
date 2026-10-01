@@ -5,11 +5,12 @@ import Image from "next/image";
 import { profile } from "@/data/profile";
 import { heroSocialLinks } from "@/data/socialLinks";
 import { HiOutlineMail } from "react-icons/hi";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import RotatingRole from "@/components/RotatingRole";
 import MumbaiClock from "@/components/MumbaiClock";
 import BannerDayMarker from "@/components/BannerDayMarker";
+import ThemeBanner from "@/components/banner/ThemeBanner";
+import AvatarAccents from "@/components/AvatarAccents";
+import SocialButton from "@/components/SocialButton";
 
 // opacity never starts at 0 here — this must stay visible even if JS is
 // slow, blocked, or never hydrates (crawlers, screenshot tools, bad networks)
@@ -30,23 +31,11 @@ export default function HeroSection() {
       <motion.div
         variants={fadeUp}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative h-36 w-full overflow-hidden rounded-lg ring-1 ring-rule sm:h-44"
+        className="relative h-40 w-full overflow-hidden rounded-lg ring-1 ring-rule sm:h-52 md:h-60"
       >
         {profile.bannerVideo ? (
-          // object-position biased to 30% from the top — this specific video
-          // is a sunset/mountain scene where a plain center-crop cuts off
-          // the moon and mountain peaks; 30% keeps those plus the bridge
-          // and train in frame at this box's wide, short aspect ratio
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            className="h-full w-full object-cover object-[50%_30%]"
-          >
-            <source src={profile.bannerVideo} type="video/mp4" />
-          </video>
+          // dusk video in dark mode, the same valley at golden hour in light
+          <ThemeBanner />
         ) : profile.banner ? (
           <Image
             src={profile.banner}
@@ -74,6 +63,7 @@ export default function HeroSection() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="mt-6 flex items-center gap-5"
       >
+        <div className="avatar-frame group/avatar relative shrink-0">
         <div className="h-[96px] w-[96px] shrink-0 overflow-hidden rounded-xl bg-bg-surface shadow-sm ring-1 ring-rule sm:h-[112px] sm:w-[112px]">
           {profile.avatarSketch ? (
             // illustrated mark — same box, frame, and size as the real photo
@@ -93,6 +83,8 @@ export default function HeroSection() {
               </span>
             </div>
           )}
+        </div>
+        <AvatarAccents />
         </div>
 
         <div className="min-w-0">
@@ -146,37 +138,12 @@ export default function HeroSection() {
       <motion.div
         variants={fadeUp}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3"
+        className="mt-8 flex flex-wrap items-center gap-2"
       >
-        <Button asChild variant="underline">
-          <a href={profile.email}>
-            <HiOutlineMail className="text-text-muted transition-colors group-hover:text-text-primary" />
-            <span>Get in touch</span>
-          </a>
-        </Button>
-
-        <span className="h-3.5 w-px bg-rule-strong" />
-
-        <TooltipProvider delayDuration={200}>
-          <div className="flex items-center gap-4">
-            {heroSocialLinks.map((link) => (
-              <Tooltip key={link.name}>
-                <TooltipTrigger asChild>
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={link.name}
-                    className="text-text-muted transition-colors hover:text-text-primary"
-                  >
-                    <link.icon size={16} />
-                  </a>
-                </TooltipTrigger>
-                <TooltipContent>{link.name}</TooltipContent>
-              </Tooltip>
-            ))}
-          </div>
-        </TooltipProvider>
+        <SocialButton href={profile.email} label="Get in touch" icon={HiOutlineMail} external={false} />
+        {heroSocialLinks.map((link) => (
+          <SocialButton key={link.name} href={link.url} label={link.name} icon={link.icon} color={link.color} />
+        ))}
       </motion.div>
     </motion.section>
   );

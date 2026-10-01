@@ -1,5 +1,10 @@
 export interface ProjectData {
   banner: string;
+  // short type label shown on the card, e.g. "AI · RAG platform"
+  kind?: string;
+  // optional dark-theme twin of `banner`: when set, `banner` is shown in light
+  // mode and this one in dark mode
+  bannerDark?: string;
   name: string;
   desc: string;
   tech: string[];
@@ -10,44 +15,41 @@ export interface ProjectData {
   stats?: string;
 }
 
+// banner: path to a landing-page screenshot in /public, e.g.
+// "/images/projects/mealswitch.png" — empty shows the "preview" placeholder.
 export const featuredProjects: ProjectData[] = [
   {
-    banner: "",
-    name: "Project One",
-    desc: "A short one to two sentence description of what this project does and why it matters.",
-    tech: ["TypeScript", "Next.js", "PostgreSQL", "Tailwind"],
-    github: "https://github.com/yourusername/project-one",
-    live: "https://project-one.example.com",
-    stats: "1200+ signups",
+    banner: "/images/projects/knowrex-light.webp",
+    bannerDark: "/images/projects/knowrex-dark.webp",
+    name: "Knowrex",
+    kind: "AI · RAG platform",
+    desc: "Full-stack RAG support platform that streams source-cited answers, retrieves semantically with Pinecone, caches with Redis and hands low-confidence queries to human support.",
+    tech: ["Next.js", "TypeScript", "Pinecone", "RAG", "Redis", "Supabase", "Docker"],
+    github: "https://github.com/dhruvjain-dev05/Knowrex",
+    live: "https://knowrex.vercel.app/",
+    stats: "sub-2s responses",
   },
   {
-    banner: "",
-    name: "Project Two",
-    desc: "Open source library or tool with a focused, single-purpose description.",
-    tech: ["JavaScript", "React", "Vite"],
-    github: "https://github.com/yourusername/project-two",
-    live: "https://project-two.example.com",
-    stats: "4k+ downloads",
+    banner: "/images/projects/mealswitch.webp",
+    name: "MealSwitch",
+    kind: "AI · Recommendation engine",
+    desc: "Recommendation engine for low-glycemic, macro-optimized food substitutions, using TF-IDF and cosine similarity with a guard-railed Gemini LLM and a FastAPI backend.",
+    tech: ["FastAPI", "Python", "React", "Gemini API", "Scikit-learn", "PostgreSQL"],
+    github: "https://github.com/Aotgoku/MealSwitch",
+    live: "https://meal-switch.vercel.app/",
   },
   {
-    banner: "",
-    name: "Project Three",
-    desc: "A side project still in progress, showing what's coming next.",
-    tech: ["Node.js", "MongoDB", "Express"],
-    github: "https://github.com/yourusername/project-three",
-    isUnderDevelopment: true,
+    banner: "/images/projects/salonwallah.webp",
+    name: "SalonWallah",
+    kind: "Mobile · Real-time queue",
+    desc: "Real-time salon queue and booking system with separate client and stylist apps, commute-aware dispatching, live Socket.io syncing and Razorpay payments.",
+    tech: ["React Native", "TypeScript", "Node.js", "MongoDB", "Redis", "WebSockets", "AWS EC2"],
+    github: "https://github.com/chetan137/SalonWala",
+    live: "https://www.salonwallah.in/",
+    stats: "8 min wait times",
   },
 ];
 
-export const additionalProjects: ProjectData[] = [
-  {
-    banner: "",
-    name: "Project Four",
-    desc: "Another shipped project worth showing on the full projects page.",
-    tech: ["React", "Node.js"],
-    github: "https://github.com/yourusername/project-four",
-    live: "https://project-four.example.com",
-  },
-];
+export const additionalProjects: ProjectData[] = [];
 
 export const allProjects: ProjectData[] = [...featuredProjects, ...additionalProjects];

@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { HiChevronDown } from "react-icons/hi";
 import type { IconType } from "react-icons";
 import { FaAws } from "react-icons/fa6";
 import { TbApi } from "react-icons/tb";
@@ -55,10 +57,14 @@ const statusDot = {
 };
 
 export default function ExperienceSection() {
+  // which entries have their full list of work showing; the first point of
+  // each is always visible, so nothing important depends on a click
+  const [open, setOpen] = useState<Record<string, boolean>>({});
+
   return (
-    <Section id="experience" index="02" kicker="Experience" title="Where I've worked.">
+    <Section id="experience" index="01" kicker="Experience" title="Where I've worked." compact className="!py-8 md:!py-10">
       <TooltipProvider delayDuration={150}>
-        <div className="space-y-12">
+        <div className="space-y-8">
           {experience.map((entry, i) => (
             <motion.article
               key={entry.company}
@@ -66,7 +72,7 @@ export default function ExperienceSection() {
               whileInView={{ y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.45, ease: "easeOut" }}
-              className={i > 0 ? "border-t border-dashed border-rule-strong pt-12" : ""}
+              className={i > 0 ? "border-t border-dashed border-rule-strong pt-8" : ""}
             >
               <header className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
                 <div className="flex items-center gap-4">
@@ -109,11 +115,11 @@ export default function ExperienceSection() {
                 </div>
               </header>
 
-              <div className="mt-6 border-t border-dashed border-rule-strong pt-6">
+              <div className="mt-4 border-t border-dashed border-rule-strong pt-4">
                 <h4 className="text-[0.85rem] font-semibold text-text-display">
                   Technologies &amp; Tools
                 </h4>
-                <ul className="mt-3 flex flex-wrap gap-2">
+                <ul className="mt-2.5 flex flex-wrap gap-2">
                   {entry.tech.map((name) => {
                     const meta = techMeta[name];
                     if (!meta) return null;
@@ -143,16 +149,50 @@ export default function ExperienceSection() {
                 </ul>
               </div>
 
-              <div className="mt-6">
+              <div className="mt-4">
                 <h4 className="text-[0.85rem] font-semibold text-text-display">What I&apos;ve done</h4>
-                <ul className="mt-3 space-y-2.5">
-                  {entry.description.map((d, j) => (
-                    <li key={j} className="flex gap-3 text-[0.9rem] leading-[1.7] text-text-secondary">
+                {(() => {
+                  const isOpen = !!open[entry.company];
+                  const [first, ...rest] = entry.description;
+                  const point = (d: string, j: number) => (
+                    <li key={j} className="flex gap-3 text-[0.88rem] leading-[1.65] text-text-secondary">
                       <span className="mt-[0.72em] h-[3px] w-[3px] shrink-0 rounded-full bg-text-ghost" />
                       {d}
                     </li>
-                  ))}
-                </ul>
+                  );
+                  return (
+                    <>
+                      <ul className="mt-2.5">{point(first, 0)}</ul>
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                            className="overflow-hidden"
+                          >
+                            <ul className="space-y-2 pt-2">{rest.map((d, j) => point(d, j + 1))}</ul>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                      {rest.length > 0 && (
+                        <button
+                          type="button"
+                          aria-expanded={isOpen}
+                          onClick={() => setOpen((o) => ({ ...o, [entry.company]: !isOpen }))}
+                          className="group/more mt-3 inline-flex items-center gap-1.5 rounded-full border border-dashed border-rule-strong px-3 py-1 font-mono text-[0.68rem] text-text-muted transition-colors hover:border-solid hover:border-text-ghost hover:text-text-primary"
+                        >
+                          {isOpen ? "Show less" : `Show ${rest.length} more`}
+                          <HiChevronDown
+                            size={13}
+                            className={`transition-transform duration-300 ${isOpen ? "rotate-180" : "group-hover/more:translate-y-0.5"}`}
+                          />
+                        </button>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </motion.article>
           ))}

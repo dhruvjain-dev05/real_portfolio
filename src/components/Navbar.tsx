@@ -5,15 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NameOrigin from "@/components/NameOrigin";
 import CommandMenu from "@/components/CommandMenu";
-import { FaGithub } from "react-icons/fa6";
-import { profile } from "@/data/profile";
 
 const links = [
-  { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/resume", label: "Resume" },
-  { href: "/analytics", label: "Analytics" },
-  { href: "/support", label: "Support" },
+  { href: "/#contact", label: "Contact" },
 ];
 
 export default function Navbar() {
@@ -63,7 +59,7 @@ export default function Navbar() {
           })}
         </ul>
 
-        {/* Right header cluster: Status badge + GitHub + Search */}
+        {/* Right header cluster: status badge + search */}
         <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-2.5">
           {/* Status pill: Open to work / Get in touch with blinking live dot */}
           <Link
@@ -88,18 +84,6 @@ export default function Navbar() {
               </span>
             </span>
           </Link>
-
-          {/* GitHub icon button */}
-          <a
-            href={`https://github.com/${profile.githubUsername}`}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="GitHub Profile"
-            title={`GitHub (@${profile.githubUsername})`}
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-text-muted ring-1 ring-rule transition-colors hover:text-text-primary hover:ring-border-hover"
-          >
-            <FaGithub size={15} />
-          </a>
 
           {/* Command Menu (Search with shortcut) */}
           <CommandMenu />

@@ -18,6 +18,7 @@ import {
   showFrame,
   size,
 } from "./sprite";
+import { playBounce, playKick, playStep } from "./sound";
 
 // First visit of a session, home page only: an empty pitch line, the ball
 // drops onto the centre spot, a pixel Messi runs in and strikes it straight at
@@ -115,6 +116,14 @@ export default function KickoffIntro() {
     let t0 = 0;
     let last = 0;
     let impacted = false;
+    let kicked = false;
+    let lastStep = -1;
+    const stepSound = (n: number) => {
+      if (n !== lastStep) {
+        lastStep = n;
+        playStep();
+      }
+    };
     let revealing = false;
     let finished = false;
 
@@ -186,8 +195,10 @@ export default function KickoffIntro() {
           const floor = groundY - D / 2;
           if (by >= floor) {
             by = floor;
-            if (vy > 140) vy = -vy * 0.42;
-            else settled = true;
+            if (vy > 140) {
+              playBounce(clamp(vy / 900, 0.3, 1));
+              vy = -vy * 0.42;
+            } else settled = true;
           }
         }
         ball.style.opacity = "1";
@@ -199,6 +210,7 @@ export default function KickoffIntro() {
         const p = clamp((t - T_RUN) / RUN_MS);
         put(player, startLeft + (kickLeft(spot, 0, w) - startLeft) * easeOutQuad(p), groundY - h);
         showFrame(sprite, p < 1 ? RUN[Math.floor((t - T_RUN) / 80) % 4] : 0, w);
+        if (p < 1) stepSound(Math.floor((t - T_RUN) / 160));
       } else if (t >= T_KICK && t < T_EXIT) {
         // the kick frames draw their own ball — ours hands over to it
         const k = Math.min(KICK.length - 1, Math.floor((t - T_KICK) / FRAME_MS));
@@ -209,9 +221,14 @@ export default function KickoffIntro() {
         const p = clamp((t - T_EXIT) / EXIT_MS);
         put(player, plantLeft + (vw + 24 - plantLeft) * easeInQuad(p), groundY - h);
         showFrame(sprite, RUN[Math.floor((t - T_EXIT) / 75) % 4], w);
+        if (p < 1) stepSound(1000 + Math.floor((t - T_EXIT) / 150));
       }
 
       // ── the strike: straight at the camera, perspective-correct
+      if (t >= T_LAUNCH && !kicked) {
+        kicked = true;
+        playKick();
+      }
       if (t >= T_LAUNCH && t < T_IMPACT) {
         const p = (t - T_LAUNCH) / FLIGHT_MS;
         const s = 1 / (1 - (1 - NEAR) * p);

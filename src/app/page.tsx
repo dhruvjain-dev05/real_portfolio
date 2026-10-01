@@ -4,29 +4,23 @@ import SkillSection from "@/components/SkillSection";
 import ExperienceSection from "@/components/ExperienceSection";
 import ActivitySection from "@/components/ActivitySection";
 import ProjectsSection from "@/components/ProjectsSection";
-import VelocityMarquee from "@/components/VelocityMarquee";
-import DotField from "@/components/DotField";
-import UsesTeaser from "@/components/UsesTeaser";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import SectionIndex from "@/components/SectionIndex";
 import KickoffIntro from "@/components/football/KickoffIntro";
 
 export default function Home() {
   return (
     <>
       <KickoffIntro />
+      <SectionIndex />
       <Navbar />
       <main className="mx-auto w-full max-w-[800px] flex-1 px-5 md:px-6">
         <HeroSection />
-        <SkillSection />
         <ExperienceSection />
-        <ActivitySection />
         <ProjectsSection />
-        <VelocityMarquee />
-        <div className="pb-10 md:pb-12">
-          <DotField />
-        </div>
-        <UsesTeaser />
+        <SkillSection />
+        <ActivitySection />
         <ContactSection />
       </main>
       <Footer />

@@ -19,6 +19,7 @@ export default function Section({
   action,
   className = "",
   compact,
+  center,
   children,
 }: {
   id?: string;
@@ -29,6 +30,8 @@ export default function Section({
   className?: string;
   // smaller heading and tighter gaps, for sections that should stay short
   compact?: boolean;
+  // centre the kicker and title
+  center?: boolean;
   children: React.ReactNode;
 }) {
   const ref = useRef<HTMLElement>(null);
@@ -76,7 +79,7 @@ export default function Section({
       <span aria-hidden className="crosshair left-0" />
       <span aria-hidden className="crosshair left-full" />
 
-      <div className="mb-4 flex items-center justify-between gap-4">
+      <div className={`mb-4 flex items-center gap-4 ${center ? "justify-center" : "justify-between"}`}>
         <p className="flex items-center gap-2.5 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-text-dim">
           {index && (
             <motion.span aria-hidden className="tabular-nums text-text-ghost" style={{ opacity: countOpacity }}>
@@ -91,7 +94,7 @@ export default function Section({
       {title && (
         <h2
           aria-label={typeof title === "string" ? title : undefined}
-          className={`font-display text-text-display ${
+          className={`font-display text-text-display ${center ? "text-center" : ""} ${
             compact ? "mb-4 text-[clamp(1.35rem,3vw,1.7rem)]" : "mb-6 text-[clamp(1.9rem,4.2vw,2.5rem)]"
           }`}
         >

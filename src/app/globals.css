@@ -44,26 +44,27 @@
 }
 
 .dark {
-  /* dark theme override — active while <html> carries the "dark" class */
-  --bg-primary: #0b0d0e;
-  --bg-surface: #141617;
-  --bg-surface-elevated: #1c1e20;
-  --bg-surface-subtle: #121415;
+  /* dark theme override — active while <html> carries the "dark" class.
+     Neutral charcoal greys (no blue tint): #121212 page, #171717 cards. */
+  --bg-primary: #121212;
+  --bg-surface: #171717;
+  --bg-surface-elevated: #1e1e1e;
+  --bg-surface-subtle: #151515;
 
-  --text-display: #f6f3ef;
-  --text-primary: #f2f2f0;
-  --text-secondary: #a5a5a0;
-  --text-tertiary: #999994;
-  --text-muted: #868682;
-  --text-faint: #6f6f6b;
-  --text-dim: #6a6a66;
-  --text-ghost: #343431;
+  --text-display: #fafafa;
+  --text-primary: #f2f2f2;
+  --text-secondary: #a1a1a1;
+  --text-tertiary: #9a9a9a;
+  --text-muted: #8a8a8a;
+  --text-faint: #737373;
+  --text-dim: #6e6e6e;
+  --text-ghost: #3a3a3a;
 
-  --border-default: #2a2c2e;
-  --border-hover: #4a4d50;
-  --border-inset: #1e2022;
-  --rule: #1d1f21;
-  --rule-strong: #26282a;
+  --border-default: #2b2b2b;
+  --border-hover: #4a4a4a;
+  --border-inset: #202020;
+  --rule: #1f1f1f;
+  --rule-strong: #2b2b2b;
 
   --accent-blue: #60a5fa;
   --accent-amber: #d99a3a;
@@ -434,4 +435,101 @@ html[data-kickoff=""]::before {
 }
 @keyframes kickoff-failsafe {
   to { visibility: hidden; }
+}
+
+/* light-theme banner: the sun's glow slowly swells and settles */
+@keyframes sun-breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+.sun-breathe {
+  animation: sun-breathe 7s ease-in-out infinite;
+}
+
+/* page transitions — template.tsx re-mounts its wrapper on every navigation */
+@keyframes page-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.page-in {
+  animation: page-in 0.32s ease-out;
+}
+
+/* avatar: Messi looks around while he peeks over the frame */
+@keyframes peek-look {
+  0%, 38% { background-position-x: 0; }
+  46%, 70% { background-position-x: calc(var(--pw) * -2); }
+  78%, 100% { background-position-x: calc(var(--pw) * -3); }
+}
+.avatar-frame:hover .avatar-peek {
+  animation: peek-look 2.6s steps(1) 0.4s infinite;
+}
+
+
+/* pressed-in "3D" button/pill surface: a fill a shade off the page, a hairline
+   highlight along the top edge, and it sinks when pressed */
+.surface-3d {
+  --surface-3d-inset: #0000001a;
+  --surface-3d-fill: #efeeea;
+  --surface-3d-fill-hover: #e6e5e0;
+  background-color: var(--surface-3d-fill);
+  box-shadow: inset 0 1px 1px 0 var(--surface-3d-inset);
+  border-color: #c9c7c0;
+}
+.dark .surface-3d {
+  --surface-3d-inset: #ffffff33;
+  --surface-3d-fill: #1e1e1e;
+  --surface-3d-fill-hover: #252525;
+  border-color: #000;
+}
+.surface-3d-raised {
+  transition: background-color 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+.surface-3d-raised:hover {
+  background-color: var(--surface-3d-fill-hover);
+}
+.surface-3d-raised:active {
+  box-shadow: inset 0 -1px 1px 0 var(--surface-3d-inset);
+}
+@media (prefers-reduced-motion: reduce) {
+  .surface-3d-raised {
+    transition: none;
+  }
+}
+
+/* interactive hover for buttons: lifts and pops, fills solid (black in light
+   mode, white in dark), icon springs; presses back in */
+.btn-pop {
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease-out,
+    color 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
+}
+.btn-pop svg {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease-out;
+}
+.btn-pop:hover {
+  transform: translateY(-2px) scale(1.04);
+  background-color: var(--text-display);
+  color: var(--bg-primary);
+  border-color: var(--text-display);
+  box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--text-display) 55%, transparent);
+}
+.btn-pop:hover svg {
+  color: currentColor !important;
+  transform: scale(1.18) rotate(-8deg);
+}
+.btn-pop:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: inset 0 2px 4px 0 #0000004d;
+}
+.btn-pop:focus-visible {
+  transform: translateY(-2px) scale(1.04);
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-pop,
+  .btn-pop svg,
+  .btn-pop:hover,
+  .btn-pop:hover svg,
+  .btn-pop:active {
+    transform: none;
+  }
 }

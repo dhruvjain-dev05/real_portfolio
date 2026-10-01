@@ -8,7 +8,7 @@ export default async function ActivitySection() {
   const data = await getContributionData(profile.githubUsername);
 
   return (
-    <Section id="activity" index="03" kicker="Activity" title="By the numbers.">
+    <Section id="activity" index="04" kicker="Activity" title="By the numbers." className="!py-8 md:!py-10">
       <ContributionCalendar data={data} username={profile.githubUsername} />
       <div className="mt-10">
         <VisitorPulse />

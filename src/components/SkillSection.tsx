@@ -56,7 +56,7 @@ export default function SkillSection() {
   const [active, setActive] = useState(ALL);
 
   return (
-    <Section id="stack" index="01" kicker="Skills" title="Tools of the trade." compact className="!py-8 md:!py-10">
+    <Section id="stack" index="03" kicker="Skills" title="Tools of the trade." compact className="!py-8 md:!py-10">
       <div
         role="tablist"
         aria-label="Skill categories"

@@ -10,7 +10,7 @@ export default function ProjectsPage() {
       <Navbar />
       <main className="mx-auto w-full max-w-[800px] flex-1 px-5 md:px-6">
         <Section index="01" kicker="Projects" title="Everything I've built.">
-          <div className="space-y-12">
+          <div className="project-grid grid auto-rows-fr gap-4 sm:grid-cols-2">
             {allProjects.map((project) => (
               <ProjectCard key={project.name} project={project} />
             ))}

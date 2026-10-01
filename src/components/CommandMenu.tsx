@@ -12,7 +12,6 @@ import {
   HiOutlineDocumentText,
   HiOutlineChartBar,
   HiOutlineHeart,
-  HiOutlineDesktopComputer,
   HiOutlineHashtag,
   HiOutlineClipboardCopy,
   HiOutlineDocumentDownload,
@@ -92,18 +91,31 @@ export default function CommandMenu() {
     returnFocus.current?.focus?.();
   }, []);
 
-  // Ctrl/⌘ + K from anywhere on the site
+  // Ctrl/⌘ + K from anywhere on the site, plus single-key shortcuts
+  // (T theme · G GitHub · H home · / search) while nothing is being typed
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         if (open) closeMenu();
         else openMenu();
+        return;
       }
+      if (open || e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      const k = e.key.toLowerCase();
+      if (k === "t") window.dispatchEvent(new Event("jyora:toggle-theme"));
+      else if (k === "g") window.open(profile.statusUrl, "_blank", "noopener");
+      else if (k === "h") router.push("/");
+      else if (k === "/") {
+        e.preventDefault();
+        openMenu();
+      } else return;
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, openMenu, closeMenu]);
+  }, [open, openMenu, closeMenu, router]);
 
   // Esc closes from anywhere — the input's own key handler only fires while it
   // has focus, which it loses as soon as a row or the backdrop is clicked
@@ -174,13 +186,12 @@ export default function CommandMenu() {
       { id: "resume", group: "Navigation", label: "Resume", hint: "Experience, education, and skills", icon: HiOutlineDocumentText, keywords: "cv", run: go("/resume") },
       { id: "analytics", group: "Navigation", label: "Analytics", hint: "Live stats and activity", icon: HiOutlineChartBar, run: go("/analytics") },
       { id: "support", group: "Navigation", label: "Support", hint: "Sponsor or say thanks", icon: HiOutlineHeart, keywords: "sponsor donate", run: go("/support") },
-      { id: "uses", group: "Navigation", label: "Uses", hint: "My setup and gear", icon: HiOutlineDesktopComputer, keywords: "setup gear", run: go("/uses") },
 
       ...(
         [
-          ["stack", "Stack"],
           ["experience", "Experience"],
           ["projects", "Featured projects"],
+          ["stack", "Stack"],
           ["activity", "GitHub activity"],
           ["contact", "Contact"],
         ] as const
@@ -220,7 +231,7 @@ export default function CommandMenu() {
         id: "toggle-theme",
         group: "Actions",
         label: "Toggle theme",
-        hint: "or pull the cord",
+        hint: "T · or pull the cord",
         icon: HiOutlineMoon,
         keywords: "dark light mode",
         // ThemeToggle owns the theme state — ask it rather than flipping the class here
@@ -421,8 +432,11 @@ export default function CommandMenu() {
                       })}
                     </div>
 
-                    <div className="flex items-center gap-4 border-t border-rule px-4 py-2 font-mono text-[0.58rem] text-text-dim">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-rule px-4 py-2 font-mono text-[0.58rem] text-text-dim">
                       <span>↑↓ navigate · Enter select</span>
+                      <span className="hidden sm:inline">
+                        <kbd>T</kbd> theme · <kbd>G</kbd> github · <kbd>H</kbd> home · <kbd>/</kbd> search
+                      </span>
                       <span className="ml-auto">ESC close</span>
                     </div>
                   </motion.div>

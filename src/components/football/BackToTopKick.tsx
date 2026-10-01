@@ -19,6 +19,7 @@ import {
   showFrame,
   size,
 } from "./sprite";
+import { playBounce, playKick, playStep } from "./sound";
 
 // "Back to top", with a footballer. When the footer comes into view he
 // dribbles in beside the button and offers, in a small speech bubble, to pass
@@ -111,6 +112,7 @@ export default function BackToTopKick() {
 
     const enter = () => {
       state = "entering";
+      let lastStep = -1;
       visible(true);
       const t0 = performance.now();
       const ms = 900;
@@ -120,6 +122,13 @@ export default function BackToTopKick() {
         place(left);
         putBall(left + REST_X * W, roll(left - ENTER_FROM, D));
         showFrame(sprite, p < 1 ? RUN[Math.floor((now - t0) / 85) % 4] : 0, W);
+        if (p < 1) {
+          const n = Math.floor((now - t0) / 170);
+          if (n !== lastStep) {
+            lastStep = n;
+            playStep();
+          }
+        }
         if (p < 1) raf = requestAnimationFrame(step);
         else {
           state = "ready";
@@ -240,6 +249,7 @@ export default function BackToTopKick() {
           const floor = b && bx > b.left && bx < b.right ? b.bottom - D / 2 : Infinity;
           if (by >= floor) {
             by = floor;
+            if (vy > 160) playBounce(clamp(vy / 900, 0.3, 1));
             vy = vy > 160 ? -vy * 0.45 : 0;
             vx *= Math.exp(-2.5 * dt);
             landedAt ||= now;
@@ -286,6 +296,7 @@ export default function BackToTopKick() {
         setTimeout(() => {
           const r = wrap.getBoundingClientRect();
           const left = kickLeft(REST_BALL_X, 3, W);
+          playKick();
           flight(r.left + left + KICK_BALL[3].x * W, r.bottom - KICK_BALL[3].y * H);
           showFrame(sprite, FOLLOW_THROUGH, W);
         }, KICK.length * 75),
@@ -293,14 +304,23 @@ export default function BackToTopKick() {
           showFrame(sprite, 0, W);
           place(SPOT);
           state = "spent";
+          // the page may already have scrolled away while he was kicking: the
+          // observer fired back then, so reset now rather than waiting for it
+          if (!inView) reset();
         }, KICK.length * 75 + 260)
       );
     };
 
+    let inView = false;
     const io = new IntersectionObserver(
       ([e]) => {
-        if (e.isIntersecting && state === "away") enter();
-        else if (!e.isIntersecting && state === "spent") reset();
+        inView = e.isIntersecting;
+        if (inView && state === "away") enter();
+        // back at the footer after a kick: fresh ball, he runs in again
+        else if (inView && state === "spent") {
+          reset();
+          enter();
+        } else if (!inView && state === "spent") reset();
       },
       { threshold: 0.6 }
     );
@@ -372,7 +392,7 @@ export default function BackToTopKick() {
         onPointerLeave={() => primeRef.current(false)}
         onFocus={() => primeRef.current(true)}
         onBlur={() => primeRef.current(false)}
-        className="group inline-flex items-center gap-2 rounded-full border border-dashed border-rule-strong px-4 py-1.5 font-mono text-[0.7rem] text-text-muted transition-colors hover:border-solid hover:border-text-ghost hover:text-text-primary"
+        className="surface-3d btn-pop group inline-flex items-center gap-2 rounded-md border px-4 py-1.5 font-mono text-[0.7rem] text-text-secondary"
       >
         Back to top
         <HiArrowUp className="transition-transform duration-200 group-hover:-translate-y-0.5" />

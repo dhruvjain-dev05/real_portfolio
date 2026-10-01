@@ -6,8 +6,8 @@ import { featuredProjects } from "@/data/projects";
 
 export default function ProjectsSection() {
   return (
-    <Section id="projects" index="04" kicker="Projects" title="Things I've shipped.">
-      <div className="space-y-12">
+    <Section id="projects" index="02" kicker="Projects" title="Things I've shipped." compact className="!py-8 md:!py-10">
+      <div className="project-grid grid auto-rows-fr gap-4 sm:grid-cols-2">
         {featuredProjects.map((project) => (
           <ProjectCard key={project.name} project={project} />
         ))}
@@ -15,7 +15,7 @@ export default function ProjectsSection() {
 
       <Link
         href="/projects"
-        className="group mt-10 inline-flex items-center gap-2 text-sm text-text-muted transition-colors hover:text-text-primary"
+        className="group mt-7 inline-flex items-center gap-2 text-sm text-text-muted transition-colors hover:text-text-primary"
       >
         <span className="border-b border-rule-strong pb-0.5 transition-colors group-hover:border-text-primary">
           All projects

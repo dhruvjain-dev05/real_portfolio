@@ -1,10 +1,4 @@
-import {
-  FaXTwitter,
-  FaLinkedin,
-  FaGithub,
-  FaInstagram,
-  FaMedium,
-} from "react-icons/fa6";
+import { FaXTwitter, FaLinkedin, FaGithub } from "react-icons/fa6";
 import { HiOutlineDocumentDownload, HiOutlineMail } from "react-icons/hi";
 import type { IconType } from "react-icons";
 
@@ -16,15 +10,11 @@ export interface SocialLink {
 }
 
 export const socialLinks: SocialLink[] = [
-  { name: "Twitter", url: "https://x.com/yourhandle", icon: FaXTwitter, color: "#1DA1F2" },
-  { name: "LinkedIn", url: "https://www.linkedin.com/in/dhruv-jain05/", icon: FaLinkedin, color: "#0077B5" },
-  { name: "GitHub", url: "https://github.com/Aotgoku", icon: FaGithub, color: "currentColor" },
-  { name: "Instagram", url: "https://instagram.com/yourhandle", icon: FaInstagram, color: "#E4405F" },
-  { name: "Medium", url: "https://medium.com/@yourhandle", icon: FaMedium, color: "currentColor" },
-  { name: "Email", url: "mailto:you@example.com", icon: HiOutlineMail, color: "#f59e0b" },
-  { name: "Resume", url: "/resume/resume.pdf", icon: HiOutlineDocumentDownload, color: "#22c55e" },
+  { name: "LinkedIn", url: "https://www.linkedin.com/in/dhruv-jain05", icon: FaLinkedin, color: "#0077B5" },
+  { name: "GitHub", url: "https://github.com/dhruvjain-dev05", icon: FaGithub, color: "currentColor" },
+  { name: "X", url: "https://x.com/DhruvJa44947128", icon: FaXTwitter, color: "currentColor" },
+  { name: "Email", url: "mailto:dhruvrakeshjain@gmail.com", icon: HiOutlineMail, color: "#f59e0b" },
+  { name: "Resume", url: "/resume/Dhruv-Jain-Resume.pdf", icon: HiOutlineDocumentDownload, color: "#22c55e" },
 ];
 
-export const heroSocialLinks = socialLinks.filter((l) =>
-  ["GitHub", "Resume", "Medium", "Instagram", "LinkedIn"].includes(l.name)
-);
+export const heroSocialLinks = socialLinks.filter((l) => ["GitHub", "LinkedIn", "X", "Resume"].includes(l.name));

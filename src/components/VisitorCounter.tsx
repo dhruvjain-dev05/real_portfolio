@@ -16,7 +16,8 @@ function ordinal(n: number) {
 const noopSubscribe = () => () => {};
 
 // one request per page load even under React strict mode's double effect
-let pending: Promise<{ count: number; mine: number | null }> | null = null;
+// mine = this browser's visitor number (remembered), first = counted just now
+let pending: Promise<{ count: number; mine: number | null; first: boolean }> | null = null;
 
 function load() {
   pending ??= (async () => {
@@ -32,17 +33,27 @@ function load() {
       try {
         localStorage.setItem(KEY, String(count));
       } catch {}
-      return { count, mine: count as number };
+      return { count, mine: count as number, first: true };
     }
-    return { count, mine: null };
+    return { count, mine, first: false };
   })();
   return pending;
 }
 
-// Footer readout of the total visitor count, plus a one-time
-// "you're the Nth visitor" toast the first time a browser visits.
-export default function VisitorCounter() {
+// Readout of the total visitor count — inline (footer) or as a small stacked
+// stat (hero) — plus a one-time "you're the Nth visitor" toast the first time
+// a browser visits. Only one instance should own the toast.
+export default function VisitorCounter({
+  variant = "inline",
+  toast = true,
+  className = "",
+}: {
+  variant?: "inline" | "stat" | "sentence";
+  toast?: boolean;
+  className?: string;
+}) {
   const [count, setCount] = useState<number | null>(null);
+  const [mine, setMine] = useState<number | null>(null);
   const [welcome, setWelcome] = useState<number | null>(null);
   // false during SSR/hydration so the portal only renders on the client
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
@@ -50,21 +61,49 @@ export default function VisitorCounter() {
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
     load()
-      .then(({ count, mine }) => {
+      .then(({ count, mine, first }) => {
         setCount(count);
-        if (mine) {
+        setMine(mine);
+        if (mine && first && toast) {
           setWelcome(mine);
           timer = setTimeout(() => setWelcome(null), 5000);
         }
       })
       .catch(() => {});
     return () => clearTimeout(timer);
-  }, []);
+  }, [toast]);
 
   return (
     <>
-      {count !== null && (
-        <p className="flex items-center gap-1.5">
+      {count !== null && variant === "stat" && (
+        // this browser's own number when we know it, the total otherwise
+        <p className={`flex-col items-end leading-none ${className}`}>
+          <span className="flex items-center gap-1 font-mono text-[0.58rem] uppercase tracking-[0.2em] text-text-dim">
+            <HiOutlineEye size={10} />
+            {mine ? "you're the" : "visitors"}
+          </span>
+          <span className="mt-1.5 font-mono text-[0.9rem] tabular-nums text-text-secondary">
+            {mine ? `${ordinal(mine)} visitor` : count.toLocaleString("en-US")}
+          </span>
+        </p>
+      )}
+      {count !== null && variant === "sentence" && (
+        <p className={`flex items-center gap-1.5 ${className}`}>
+          <HiOutlineEye size={12} />
+          {mine ? (
+            <span>
+              You are the <strong className="font-medium text-text-primary">{ordinal(mine)}</strong> visitor to this portfolio
+            </span>
+          ) : (
+            <span>
+              <strong className="font-medium text-text-primary">{count.toLocaleString("en-US")}</strong>{" "}
+              {count === 1 ? "visitor" : "visitors"} so far
+            </span>
+          )}
+        </p>
+      )}
+      {count !== null && variant === "inline" && (
+        <p className={`flex items-center gap-1.5 ${className}`}>
           <HiOutlineEye size={12} />
           {count.toLocaleString("en-US")} {count === 1 ? "visitor" : "visitors"}
         </p>

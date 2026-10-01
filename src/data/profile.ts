@@ -6,17 +6,16 @@ export const profile = {
   // real LinkedIn headline: "Full Stack Engineer Intern at @Wallnut Building
   // Solutions | AI & LLM Applications | AWS | Web Systems"
   roles: ["Full Stack Engineer Intern", "AI & LLM Applications", "AWS & Web Systems"],
-  handle: "@Aotgoku",
+  handle: "@dhruvjain-dev05",
   status: "Exploring AI & LLM applications",
-  statusUrl: "https://github.com/Aotgoku",
+  statusUrl: "https://github.com/dhruvjain-dev05",
   location: "Mumbai, India",
   bio: [
     "Final-year <b>Computer Science (AI & ML)</b> student at University of Mumbai, currently a <b><span style=\"white-space:nowrap\">Full Stack Engineer Intern</span></b> building production-ready software.",
     "My work spans <b>full-stack development, web systems, backend engineering, AWS, and AI/LLM applications</b> — I like seeing how different pieces of technology fit together to solve real problems.",
     "Still early in the journey, but I learn by building — always open to connecting with people in software, AI, and technology.",
   ],
-  // still needed: a real contact email (LinkedIn doesn't expose it publicly)
-  email: "mailto:you@example.com",
+  email: "mailto:dhruvrakeshjain@gmail.com",
   // same photo, two backgrounds: white for dark mode, warm off-white
   // (#F7F6F2) for light mode so it separates from the page
   avatar: "/images/profile/avatar.jpg",
@@ -29,6 +28,6 @@ export const profile = {
   // set this to your banner image path (e.g. "/images/profile/banner.jpg");
   // empty string renders the placeholder — you said this is coming later
   banner: "",
-  githubUsername: "Aotgoku",
-  resumeUrl: "/resume/resume.pdf",
+  githubUsername: "dhruvjain-dev05",
+  resumeUrl: "/resume/Dhruv-Jain-Resume.pdf",
 };
