@@ -29,5 +29,7 @@ export const profile = {
   // empty string renders the placeholder — you said this is coming later
   banner: "",
   githubUsername: "dhruvjain-dev05",
-  resumeUrl: "/resume/Dhruv-Jain-Resume.pdf",
+  // bump `v` whenever the PDF is replaced, so phones/browsers can't serve a
+  // cached copy of the old one
+  resumeUrl: "/resume/Dhruv-Jain-Resume.pdf?v=2026-10-04",
 };

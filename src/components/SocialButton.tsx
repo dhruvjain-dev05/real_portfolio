@@ -19,7 +19,7 @@ export default function SocialButton({
   external?: boolean;
 }) {
   // a PDF is a real download (saved as a clean file name), not a new tab
-  const pdf = href.toLowerCase().endsWith(".pdf");
+  const pdf = href.split("?")[0].toLowerCase().endsWith(".pdf");
   return (
     <a
       href={href}
