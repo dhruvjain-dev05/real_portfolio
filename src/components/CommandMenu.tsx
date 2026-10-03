@@ -63,6 +63,12 @@ export default function CommandMenu() {
 
   // false on the server and during hydration, the real value right after
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
+  // mouse/trackpad (true) vs touch screen (false)
+  const finePointer = useSyncExternalStore(
+    noopSubscribe,
+    () => window.matchMedia("(pointer: fine)").matches,
+    () => true,
+  );
 
   const isApple = useSyncExternalStore(
     noopSubscribe,
@@ -336,7 +342,8 @@ export default function CommandMenu() {
                     <div className="flex items-center gap-3 border-b border-rule px-4">
                       <HiOutlineSearch size={15} className="shrink-0 text-text-dim" />
                       <input
-                        autoFocus
+                        // on phones, don't pop the keyboard over the list — tap the field to type
+                        autoFocus={finePointer}
                         value={query}
                         onChange={(e) => {
                           setQuery(e.target.value);

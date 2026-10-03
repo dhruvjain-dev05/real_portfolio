@@ -60,7 +60,7 @@ export default function SkillSection() {
       <div
         role="tablist"
         aria-label="Skill categories"
-        className="no-scrollbar flex items-center gap-1 overflow-x-auto rounded-xl border border-dashed border-rule-strong p-1"
+        className="no-scrollbar flex flex-wrap items-center gap-1 rounded-xl border border-dashed border-rule-strong p-1 sm:flex-nowrap sm:overflow-x-auto"
       >
         {tabs.map((tab) => {
           const selected = tab.label === active;

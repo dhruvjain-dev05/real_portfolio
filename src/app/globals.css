@@ -425,6 +425,10 @@ body {
 html[data-kickoff]:not([data-kickoff="reveal"]) {
   overflow: hidden;
 }
+/* the pull-cord stays out of sight until the intro starts to reveal the page */
+html[data-kickoff]:not([data-kickoff="reveal"]) .theme-rope {
+  visibility: hidden;
+}
 html[data-kickoff=""]::before {
   content: "";
   position: fixed;
@@ -465,7 +469,8 @@ html[data-kickoff=""]::before {
   46%, 70% { background-position-x: calc(var(--pw) * -2); }
   78%, 100% { background-position-x: calc(var(--pw) * -3); }
 }
-.avatar-frame:hover .avatar-peek {
+.avatar-frame:hover .avatar-peek,
+.avatar-frame[data-peek] .avatar-peek {
   animation: peek-look 2.6s steps(1) 0.4s infinite;
 }
 
@@ -528,6 +533,19 @@ html[data-kickoff=""]::before {
 .btn-pop:active {
   transform: translateY(0) scale(0.97);
   box-shadow: inset 0 2px 4px 0 #0000004d;
+}
+/* touch screens: TapPop sets data-pop for a moment after a tap, so the same
+   pop (black in light mode, white in dark) plays and then eases back */
+.btn-pop[data-pop] {
+  transform: translateY(-2px) scale(1.04);
+  background-color: var(--text-display);
+  color: var(--bg-primary);
+  border-color: var(--text-display);
+  box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--text-display) 55%, transparent);
+}
+.btn-pop[data-pop] svg {
+  color: currentColor !important;
+  transform: scale(1.18) rotate(-8deg);
 }
 /* one shared keyboard ring (same as ring-2 ring-text-ghost ring-offset-2
    ring-offset-bg-primary), layered under any lift shadow */

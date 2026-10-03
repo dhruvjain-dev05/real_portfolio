@@ -32,18 +32,18 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 bg-bg-primary/80 backdrop-blur-md">
-      <nav className="mx-auto flex max-w-[800px] items-center gap-4 sm:gap-6 border-b border-dashed border-rule-strong px-5 py-4 md:px-6">
+      <nav className="mx-auto flex max-w-[800px] items-center gap-2.5 sm:gap-6 border-b border-dashed border-rule-strong px-5 py-4 md:px-6">
         <NameOrigin />
 
         {/* scrolls itself on very narrow phones rather than widening the page */}
-        <ul className="no-scrollbar flex min-w-0 items-center gap-3.5 overflow-x-auto sm:gap-5">
+        <ul className="no-scrollbar flex min-w-0 items-center gap-2.5 overflow-x-auto sm:gap-5">
           {links.map((link) => {
             const active = pathname === link.href;
             return (
               <li key={link.href} className="relative shrink-0">
                 <Link
                   href={link.href}
-                  className={`text-[0.82rem] transition-colors duration-200 ${
+                  className={`text-[0.78rem] transition-colors duration-200 sm:text-[0.82rem] ${
                     active
                       ? "font-medium text-text-primary"
                       : "text-text-muted hover:text-text-primary"

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Instrument_Serif, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import ThemeToggle from "@/components/ThemeToggle";
+import TapPop from "@/components/TapPop";
 import DotSpotlight from "@/components/DotSpotlight";
 import ScrollProgress from "@/components/ScrollProgress";
 import "./globals.css";
@@ -71,6 +72,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-bg-primary text-text-primary">
         <ThemeToggle />
+        <TapPop />
         <DotSpotlight />
         {/* dashed rails at the edges of the 800px content column — every
             section rule and the header/footer rules run out to meet them */}

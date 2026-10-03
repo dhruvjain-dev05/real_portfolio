@@ -89,7 +89,12 @@ const ThemeToggle = () => {
       return { mx, my };
     };
 
-    const onPointerDown = (e: PointerEvent | MouseEvent | TouchEvent) => {
+    // is this touch/click on the pull-toggle or the end of the cord? (the rope
+    // is hidden while the kick-off intro is still covering the page)
+    const grabTarget = (e: PointerEvent | MouseEvent | TouchEvent): Point | null => {
+      const kickoff = document.documentElement.getAttribute("data-kickoff");
+      if (kickoff !== null && kickoff !== "reveal") return null;
+
       const { mx, my } = getPoint(e);
       const endPoint = points.current.at(-1)!;
       const bodyW = 24;
@@ -113,12 +118,31 @@ const ThemeToggle = () => {
         }
       }
 
-      if (withinBody || nearestDist < 24) {
+      if (withinBody) return endPoint;
+      return nearestDist < 24 ? nearest : null;
+    };
+
+    const onPointerDown = (e: PointerEvent | MouseEvent | TouchEvent) => {
+      const target = grabTarget(e);
+      if (target) {
         mouse.current.down = true;
-        mouse.current.target = withinBody ? endPoint : nearest;
+        mouse.current.target = target;
         if (e.cancelable) e.preventDefault();
       }
     };
+
+    // Touch screens: a downward drag at the top of the page is claimed by the
+    // browser (scroll / pull-to-refresh) before the cord ever sees it. Cancelling
+    // the touch when it starts ON the cord — and while it is being dragged —
+    // keeps the gesture for the cord. Touches anywhere else are left alone.
+    const onTouchStart = (e: TouchEvent) => {
+      if (grabTarget(e) && e.cancelable) e.preventDefault();
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (mouse.current.down && e.cancelable) e.preventDefault();
+    };
+    window.addEventListener("touchstart", onTouchStart, { passive: false });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
 
     const onPointerMove = (e: PointerEvent | MouseEvent | TouchEvent) => {
       const { mx, my } = getPoint(e);
@@ -307,6 +331,8 @@ const ThemeToggle = () => {
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener("jyora:toggle-theme", onExternalToggle);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
 
       if (supportsPointer) {
         window.removeEventListener("pointerdown", onPointerDown);
@@ -325,7 +351,7 @@ const ThemeToggle = () => {
   }, []);
 
   return (
-    <div className="fixed top-0 right-[0vw] sm:right-[6.5vw] md:right-[3vw] lg:right-[5.5vw] z-[999] pointer-events-none w-[160px] h-[260px]">
+    <div className="theme-rope fixed top-0 right-[0vw] sm:right-[6.5vw] md:right-[3vw] lg:right-[5.5vw] z-[999] pointer-events-none w-[160px] h-[260px]">
       <canvas ref={canvasRef} className="pointer-events-none w-full h-full block touch-none" />
     </div>
   );

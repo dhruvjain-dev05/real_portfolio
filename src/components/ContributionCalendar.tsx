@@ -16,6 +16,8 @@ const LEVEL_COLORS = [
   "var(--cal-level-4)",
 ];
 
+const MOBILE_WEEKS = 26;
+
 const fmt = (iso: string) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {
     month: "short",
@@ -63,7 +65,22 @@ export default function ContributionCalendar({
     const next = months[i + 1];
     return m.weekIdx <= n - 3 && (!next || next.weekIdx - m.weekIdx >= 3);
   });
-  const columns = { gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` };
+  // Phones show the last MOBILE_WEEKS weeks up to today instead of the whole
+  // year, so each square is big enough to read as a square (all 53 columns at
+  // phone width shrink them to dots). From `sm` up, the full year as before.
+  const today = new Date().toISOString().slice(0, 10);
+  let current = 0;
+  weeks.forEach((w, wi) => {
+    if (w.some((d) => d && d.date <= today)) current = wi;
+  });
+  const start = Math.max(0, Math.min(current - MOBILE_WEEKS + 1, n - MOBILE_WEEKS));
+  const onPhone = (wi: number) => wi >= start && wi < start + MOBILE_WEEKS;
+  const columns = {
+    "--n": n,
+    "--m": Math.min(n, MOBILE_WEEKS),
+  } as React.CSSProperties;
+  const gridCols =
+    "[grid-template-columns:repeat(var(--m),minmax(0,1fr))] sm:[grid-template-columns:repeat(var(--n),minmax(0,1fr))]";
 
   return (
     <div>
@@ -73,17 +90,23 @@ export default function ContributionCalendar({
         className="cal-wave relative"
         onMouseLeave={() => setHovered(null)}
       >
-        <div className="mb-1.5 grid gap-[3px] font-mono text-[0.62rem] leading-none text-text-dim" style={columns}>
+        <div className={`mb-1.5 grid gap-[3px] font-mono text-[0.62rem] leading-none text-text-dim ${gridCols}`} style={columns}>
           {labels.map((m) => (
-            <span key={m.weekIdx} className="whitespace-nowrap" style={{ gridColumnStart: m.weekIdx + 1 }}>
+            <span
+              key={m.weekIdx}
+              className={`whitespace-nowrap [grid-column-start:var(--ms)] sm:[grid-column-start:var(--s)] ${
+                onPhone(m.weekIdx) && m.weekIdx <= start + MOBILE_WEEKS - 3 ? "" : "max-sm:hidden"
+              }`}
+              style={{ "--s": m.weekIdx + 1, "--ms": m.weekIdx - start + 1 } as React.CSSProperties}
+            >
               {m.label}
             </span>
           ))}
         </div>
 
-        <div className="grid gap-[3px]" style={columns}>
+        <div className={`grid gap-[3px] ${gridCols}`} style={columns}>
           {weeks.map((week, wi) => (
-            <div key={wi} className="grid content-start gap-[3px]">
+            <div key={wi} className={`grid content-start gap-[3px] ${onPhone(wi) ? "" : "max-sm:hidden"}`}>
               {week.map((day, di) =>
                 !day ? (
                   <div key={di} className="aspect-square w-full" />

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { SHEET, size } from "@/components/football/sprite";
 
 // Two quiet extras for the avatar frame (its parent must be `relative` and
@@ -10,11 +11,39 @@ import { SHEET, size } from "@/components/football/sprite";
 const { w: PW, h: PH } = size(38);
 
 export default function AvatarAccents() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [peek, setPeek] = useState(false);
+
+  // touch screens can't hover: tapping the photo makes Messi pop up for a moment
+  useEffect(() => {
+    const frame = wrapRef.current?.closest<HTMLElement>(".avatar-frame");
+    if (!frame) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const onDown = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") return;
+      if ((e.target as Element | null)?.closest("button")) return; // the theme badge
+      setPeek(true);
+      frame.setAttribute("data-peek", "");
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        setPeek(false);
+        frame.removeAttribute("data-peek");
+      }, 2600);
+    };
+    frame.addEventListener("pointerdown", onDown);
+    return () => {
+      clearTimeout(timer);
+      frame.removeEventListener("pointerdown", onDown);
+    };
+  }, []);
+
   return (
     <>
-      <div aria-hidden className="pointer-events-none absolute -top-[25px] left-4 overflow-hidden" style={{ width: PW, height: 26 }}>
+      <div ref={wrapRef} aria-hidden className="pointer-events-none absolute -top-[25px] left-4 overflow-hidden" style={{ width: PW, height: 26 }}>
         <div
-          className="avatar-peek translate-y-full transition-transform duration-[380ms] ease-[cubic-bezier(0.34,1.5,0.64,1)] group-hover/avatar:translate-y-0"
+          className={`avatar-peek transition-transform duration-[380ms] ease-[cubic-bezier(0.34,1.5,0.64,1)] group-hover/avatar:translate-y-0 ${
+            peek ? "translate-y-0" : "translate-y-full"
+          }`}
           style={
             {
               width: PW,
