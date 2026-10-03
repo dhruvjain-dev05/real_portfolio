@@ -76,11 +76,11 @@
   --status-past: #f87171;
   --status-future: #fbbf24;
 
-  --cal-level-0: #1b1d1f;
-  --cal-level-1: #33363a;
-  --cal-level-2: #55595e;
-  --cal-level-3: #878c92;
-  --cal-level-4: #d7dbe0;
+  --cal-level-0: #1e1e1e;
+  --cal-level-1: #3a3a3a;
+  --cal-level-2: #5e5e5e;
+  --cal-level-3: #9a9a9a;
+  --cal-level-4: #f2f2f2;
 }
 
 @theme inline {
@@ -532,4 +532,20 @@ html[data-kickoff=""]::before {
   .btn-pop:active {
     transform: none;
   }
+}
+
+/* GitHub calendar: cells pop in as a left-to-right wave once in view */
+@keyframes cal-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+.cal-wave:not([data-in="true"]) .cal-cell {
+  opacity: 0;
+}
+.cal-wave[data-in="true"] .cal-cell {
+  animation: cal-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  animation-delay: calc(var(--w) * 9ms + var(--d) * 14ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cal-wave .cal-cell { opacity: 1 !important; animation: none !important; }
 }

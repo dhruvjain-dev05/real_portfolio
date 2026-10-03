@@ -1,11 +1,12 @@
 "use client";
 
 import { useId, useState } from "react";
-import { HiOutlineCheck, HiOutlinePaperAirplane } from "react-icons/hi";
+import { HiOutlineCheck, HiOutlineExternalLink, HiOutlinePaperAirplane } from "react-icons/hi";
 import { profile } from "@/data/profile";
 
-// A simple contact card. Sending opens the visitor's mail app with everything
-// pre-filled (no backend needed).
+// A simple contact card. "Send" opens the visitor's mail app pre-filled; for
+// people with no mail app set up (most webmail users) there is an "Open in
+// Gmail" link carrying the same text. No backend needed.
 
 const address = profile.email.replace("mailto:", "");
 const topics = ["Job opportunity", "Project", "Collaboration", "Just saying hi"];
@@ -19,13 +20,31 @@ export default function PostcardContact() {
   const [sent, setSent] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const content = () => {
+    const who = name.trim() || "A visitor";
+    return {
+      subject: topic ? `${topic} — ${who}` : `Hello from ${who}`,
+      body: `${msg.trim()}\n\n— ${who}${from.trim() ? `\n${from.trim()}` : ""}`,
+    };
+  };
+  const q = (s: string) => encodeURIComponent(s);
+
   const send = (e: React.FormEvent) => {
     e.preventDefault();
     if (!msg.trim()) return;
-    const who = name.trim() || "A visitor";
-    const subject = topic ? `${topic} — ${who}` : `Hello from ${who}`;
-    const body = `${msg.trim()}\n\n— ${who}${from.trim() ? `\n${from.trim()}` : ""}`;
-    window.location.href = `${profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const { subject, body } = content();
+    window.location.href = `${profile.email}?subject=${q(subject)}&body=${q(body)}`;
+    setSent(true);
+  };
+
+  const gmail = () => {
+    if (!msg.trim()) return;
+    const { subject, body } = content();
+    window.open(
+      `https://mail.google.com/mail/?view=cm&fs=1&to=${q(address)}&su=${q(subject)}&body=${q(body)}`,
+      "_blank",
+      "noopener"
+    );
     setSent(true);
   };
 
@@ -37,9 +56,11 @@ export default function PostcardContact() {
     } catch {}
   };
 
-  const label = "font-mono text-[0.6rem] uppercase tracking-[0.18em] text-text-dim";
+  // labels stay legible (≥10.5px, muted not dim); fields are 16px on phones so
+  // iOS doesn't zoom the page when one is focused
+  const label = "font-mono text-[0.66rem] uppercase tracking-[0.16em] text-text-muted";
   const field =
-    "mt-1.5 w-full rounded-md border border-rule-strong bg-bg-surface px-3 py-2 text-[0.82rem] text-text-primary outline-none transition-colors placeholder:text-text-dim focus:border-text-dim";
+    "mt-1.5 w-full rounded-md border border-rule-strong bg-bg-surface px-3 py-2.5 text-base text-text-primary outline-none transition-colors placeholder:text-text-dim focus:border-text-dim sm:py-2 sm:text-[0.85rem]";
 
   return (
     <div className="mx-auto w-full max-w-[34rem]">
@@ -47,14 +68,14 @@ export default function PostcardContact() {
         <p className={label} id={`${uid}-t`}>
           What&apos;s it about?
         </p>
-        <div role="group" aria-labelledby={`${uid}-t`} className="mt-2 flex flex-wrap gap-1.5">
+        <div role="group" aria-labelledby={`${uid}-t`} className="mt-2.5 flex flex-wrap gap-2">
           {topics.map((t) => (
             <button
               key={t}
               type="button"
               aria-pressed={topic === t}
               onClick={() => setTopic(topic === t ? null : t)}
-              className={`surface-3d btn-pop rounded-md border px-3 py-1 text-[0.72rem] font-medium ${
+              className={`surface-3d btn-pop rounded-md border px-3 py-2 text-[0.76rem] font-medium sm:py-1.5 ${
                 topic === t ? "!bg-text-display !text-bg-primary" : "text-text-secondary hover:text-text-primary"
               }`}
             >
@@ -111,29 +132,39 @@ export default function PostcardContact() {
           />
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-          <p className="flex items-center gap-1.5 font-mono text-[0.64rem] text-text-dim" aria-live="polite">
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="flex min-h-5 items-center gap-1.5 font-mono text-[0.68rem] text-text-muted" aria-live="polite">
             {sent ? (
               <>
-                <HiOutlineCheck className="text-status-active" /> Mail app opened — press send there.
+                <HiOutlineCheck className="shrink-0 text-status-active" /> Almost there — press send in your mail.
               </>
             ) : (
-              "Opens in your mail app, pre-filled."
+              "Opens your mail app, pre-filled."
             )}
           </p>
-          <button
-            type="submit"
-            className="surface-3d btn-pop inline-flex items-center gap-2 rounded-md border px-4 py-1.5 text-[0.78rem] font-medium text-text-primary"
-          >
-            {sent ? "Send again" : "Send message"}
-            <HiOutlinePaperAirplane className="rotate-90" />
-          </button>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              onClick={gmail}
+              disabled={!msg.trim()}
+              className="inline-flex items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[0.76rem] font-medium text-text-secondary transition-colors hover:text-text-primary disabled:pointer-events-none disabled:opacity-40"
+            >
+              Open in Gmail <HiOutlineExternalLink size={13} />
+            </button>
+            <button
+              type="submit"
+              className="surface-3d btn-pop inline-flex items-center justify-center gap-2 rounded-md border px-5 py-2.5 text-[0.8rem] font-medium text-text-primary sm:py-2"
+            >
+              {sent ? "Send again" : "Send message"}
+              <HiOutlinePaperAirplane className="rotate-90" />
+            </button>
+          </div>
         </div>
       </form>
 
-      <p className="mt-4 text-center font-mono text-[0.68rem] text-text-dim">
+      <p className="mt-4 text-center font-mono text-[0.72rem] leading-[1.7] text-text-muted">
         Prefer email?{" "}
-        <a href={profile.email} className="text-text-secondary underline decoration-dashed underline-offset-4 hover:text-text-primary">
+        <a href={profile.email} className="break-all text-text-secondary underline decoration-dashed underline-offset-4 hover:text-text-primary">
           {address}
         </a>
         {" · "}

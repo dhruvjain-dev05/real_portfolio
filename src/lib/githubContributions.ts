@@ -16,7 +16,10 @@ export interface ContributionMonthLabel {
 }
 
 export interface ContributionData {
-  weeks: ContributionDay[][];
+  // Sunday-first columns; the first/last week of the year are padded with
+  // null so every row is the same weekday, exactly as on github.com
+  weeks: (ContributionDay | null)[][];
+  year: number;
   months: ContributionMonthLabel[];
   total: number;
 }
@@ -58,31 +61,40 @@ function parseContributionsHtml(html: string): { total: number; days: Contributi
 }
 
 function toWeeksAndMonths(days: ContributionDay[]) {
-  const weeks: ContributionDay[][] = [];
-  for (let i = 0; i < days.length; i += 7) {
-    weeks.push(days.slice(i, i + 7));
+  const weeks: (ContributionDay | null)[][] = [];
+  let week: (ContributionDay | null)[] = [];
+  const dow = (iso: string) => new Date(`${iso}T00:00:00Z`).getUTCDay();
+  for (let i = 0; i < dow(days[0].date); i++) week.push(null);
+  for (const d of days) {
+    week.push(d);
+    if (week.length === 7) {
+      weeks.push(week);
+      week = [];
+    }
+  }
+  if (week.length) {
+    while (week.length < 7) week.push(null);
+    weeks.push(week);
   }
 
+  // a month's label sits over the week that holds its 1st (and Jan/first week)
   const months: ContributionMonthLabel[] = [];
-  let lastMonth = -1;
-  weeks.forEach((week, wi) => {
-    const firstDay = new Date(`${week[0].date}T00:00:00Z`);
-    const month = firstDay.getUTCMonth();
-    if (month !== lastMonth) {
-      months.push({
-        label: firstDay.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" }),
-        weekIdx: wi,
-      });
-      lastMonth = month;
-    }
+  weeks.forEach((w, wi) => {
+    const first = w.find((d) => d && d.date.endsWith("-01")) ?? (wi === 0 ? w.find(Boolean) : null);
+    if (!first) return;
+    const label = new Date(`${first.date}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", timeZone: "UTC" });
+    if (months[months.length - 1]?.label !== label) months.push({ label, weekIdx: wi });
   });
 
   return { weeks, months };
 }
 
+// The calendar year (Jan–Dec), like the GitHub profile page: days that haven't
+// happened yet come back as empty cells.
 export async function getContributionData(username: string): Promise<ContributionData | null> {
   try {
-    const res = await fetch(`https://github.com/users/${username}/contributions`, {
+    const year = new Date().getUTCFullYear();
+    const res = await fetch(`https://github.com/users/${username}/contributions?from=${year}-01-01&to=${year}-12-31`, {
       headers: { "User-Agent": "Mozilla/5.0 (compatible; personal-portfolio-build)" },
       next: { revalidate: 3600 },
     });
@@ -93,7 +105,7 @@ export async function getContributionData(username: string): Promise<Contributio
     if (!parsed) return null;
 
     const { weeks, months } = toWeeksAndMonths(parsed.days);
-    return { weeks, months, total: parsed.total };
+    return { weeks, months, total: parsed.total, year };
   } catch {
     return null;
   }

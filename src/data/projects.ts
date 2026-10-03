@@ -35,7 +35,7 @@ export const featuredProjects: ProjectData[] = [
     kind: "AI · Recommendation engine",
     desc: "Recommendation engine for low-glycemic, macro-optimized food substitutions, using TF-IDF and cosine similarity with a guard-railed Gemini LLM and a FastAPI backend.",
     tech: ["FastAPI", "Python", "React", "Gemini API", "Scikit-learn", "PostgreSQL"],
-    github: "https://github.com/Aotgoku/MealSwitch",
+    github: "https://github.com/dhruvjain-dev05/MealSwitch",
     live: "https://meal-switch.vercel.app/",
   },
   {

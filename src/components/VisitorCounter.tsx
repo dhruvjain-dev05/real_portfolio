@@ -89,10 +89,10 @@ export default function VisitorCounter({
       )}
       {count !== null && variant === "sentence" && (
         <p className={`flex items-center gap-1.5 ${className}`}>
-          <HiOutlineEye size={12} />
+          <HiOutlineEye size={12} className="shrink-0" />
           {mine ? (
             <span>
-              You are the <strong className="font-medium text-text-primary">{ordinal(mine)}</strong> visitor to this portfolio
+              You are the <strong className="font-medium text-text-primary">{ordinal(mine)}</strong> visitor
             </span>
           ) : (
             <span>

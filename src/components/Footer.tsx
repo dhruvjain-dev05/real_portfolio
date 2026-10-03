@@ -16,7 +16,8 @@ const pages = [
   { href: "/support", label: "Support" },
 ];
 
-const connect = socialLinks;
+// the Contact section just above already carries the email, so it is left out here
+const connect = socialLinks.filter((l) => l.name !== "Email");
 
 export default function Footer() {
   const [time, setTime] = useState("");
@@ -39,7 +40,7 @@ export default function Footer() {
   return (
     <footer className="relative mx-auto w-full max-w-[800px] overflow-hidden">
       <div className="flex flex-col items-center border-t border-dashed border-rule-strong px-5 pt-9 pb-10 text-center md:px-6">
-        <p className="font-mono text-[0.62rem] uppercase tracking-[0.28em] text-text-dim">
+        <p className="font-mono text-[0.66rem] uppercase tracking-[0.28em] text-text-muted">
           Connect
         </p>
 
@@ -63,7 +64,7 @@ export default function Footer() {
               <li key={p.href}>
                 <Link
                   href={p.href}
-                  className="group relative font-mono text-[0.72rem] text-text-muted transition-colors hover:text-text-primary"
+                  className="group relative font-mono text-[0.78rem] text-text-muted transition-colors hover:text-text-primary"
                 >
                   {p.label}
                   <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-text-primary transition-transform duration-300 group-hover:scale-x-100" />
@@ -73,23 +74,24 @@ export default function Footer() {
           </ul>
         </nav>
 
-        <div className="mt-6 flex flex-col items-center gap-1.5 font-mono text-[0.75rem] text-text-muted">
-          <p className="flex items-center gap-2">
-            <span className="status-dot-glow live-pulse-dot h-1.5 w-1.5 rounded-full bg-status-active text-status-active" />
-            <span className="text-text-primary">{profile.location}</span>
-            <span className="text-text-ghost">·</span>
-            <span className="tabular-nums">{time || " "}</span>
+        <BackToTopKick />
+
+        {/* closing lines: copyright, then where / when / which visitor */}
+        <div className="mt-9 flex flex-col items-center gap-1.5 font-mono text-text-muted">
+          <p className="text-[0.72rem]">
+            © {new Date().getFullYear()} {profile.name}. All rights reserved.
           </p>
-          <div className="text-text-muted">
+          <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-[0.68rem]">
+            <span className="flex items-center gap-1.5">
+              <span className="status-dot-glow live-pulse-dot h-1.5 w-1.5 rounded-full bg-status-active text-status-active" />
+              {profile.location}
+              <span className="text-text-ghost">·</span>
+              <span className="tabular-nums">{time || " "}</span>
+            </span>
+            <span aria-hidden className="text-text-ghost">·</span>
             <VisitorCounter variant="sentence" />
           </div>
         </div>
-
-        <BackToTopKick />
-
-        <p className="mt-9 font-mono text-[0.66rem] text-text-dim">
-          © {new Date().getFullYear()} {profile.name}. All rights reserved.
-        </p>
       </div>
     </footer>
   );

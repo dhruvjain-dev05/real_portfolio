@@ -1,7 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useInView } from "framer-motion";
 import type { ContributionData } from "@/lib/githubContributions";
+
+// Contribution calendar: flush with the section's edges — the first week's
+// column starts at the left border, the last week's ends at the right one, and
+// the month labels sit on the same grid. Grey dots (white in dark mode).
 
 const LEVEL_COLORS = [
   "var(--cal-level-0)",
@@ -11,14 +16,13 @@ const LEVEL_COLORS = [
   "var(--cal-level-4)",
 ];
 
-function formatDate(isoDate: string) {
-  return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString("en-US", {
+const fmt = (iso: string) =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
     timeZone: "UTC",
   });
-}
 
 export default function ContributionCalendar({
   data,
@@ -28,6 +32,8 @@ export default function ContributionCalendar({
   username: string;
 }) {
   const [hovered, setHovered] = useState<{ date: string; count: number; x: number; y: number } | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const seen = useInView(gridRef, { once: true, margin: "-60px" });
 
   // real GitHub data failed to load — an honest gap beats a fake graph
   if (!data) {
@@ -47,83 +53,83 @@ export default function ContributionCalendar({
     );
   }
 
-  const { weeks, months, total } = data;
-  const weekCount = weeks.length;
-
-  // one shared column grid (one column per week) drives both the month-label
-  // row and the day cells below, so both always stay aligned and both
-  // stretch fluidly to fill the full container width — no fixed pixel math.
-  // 10px minimum keeps cells legible; below that the grid overflows into
-  // the horizontal scroll container instead of shrinking further.
-  const columnsStyle = { gridTemplateColumns: `repeat(${weekCount}, minmax(10px, 1fr))` };
+  const { weeks, months, total, year } = data;
+  const n = weeks.length;
+  // drop month labels that would collide with the next one or run past the
+  // right edge (a partial month at either end of the year)
+  const labels = months.filter((m, i) => {
+    const next = months[i + 1];
+    return m.weekIdx <= n - 3 && (!next || next.weekIdx - m.weekIdx >= 3);
+  });
+  const columns = { gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` };
 
   return (
     <div>
-      {/* labels and grid scroll together — required once the 10px-per-cell
-          floor is hit on narrow screens */}
-      <div className="overflow-x-auto">
-        <div
-          className="mb-1.5 grid font-mono text-[0.62rem] text-text-dim"
-          style={columnsStyle}
-        >
-          {months.map((m, i) => (
-            <span
-              key={i}
-              className="whitespace-nowrap"
-              style={{ gridColumnStart: m.weekIdx + 1 }}
-            >
+      <div
+        ref={gridRef}
+        data-in={seen}
+        className="cal-wave relative"
+        onMouseLeave={() => setHovered(null)}
+      >
+        <div className="mb-1.5 grid gap-[3px] font-mono text-[0.62rem] leading-none text-text-dim" style={columns}>
+          {labels.map((m) => (
+            <span key={m.weekIdx} className="whitespace-nowrap" style={{ gridColumnStart: m.weekIdx + 1 }}>
               {m.label}
             </span>
           ))}
         </div>
 
-        <div className="relative grid gap-[3px]" style={columnsStyle}>
+        <div className="grid gap-[3px]" style={columns}>
           {weeks.map((week, wi) => (
-            <div key={wi} className="grid gap-[3px]" style={{ gridColumnStart: wi + 1 }}>
-              {week.map((day, di) => (
+            <div key={wi} className="grid content-start gap-[3px]">
+              {week.map((day, di) =>
+                !day ? (
+                  <div key={di} className="aspect-square w-full" />
+                ) : (
                 <div
                   key={di}
-                  className="aspect-square w-full cursor-pointer rounded-[2px]"
-                  style={{ backgroundColor: LEVEL_COLORS[day.level] }}
+                  className="cal-cell aspect-square w-full cursor-pointer rounded-[2px] transition-transform duration-150 ease-out hover:z-10 hover:scale-[1.5] hover:ring-1 hover:ring-text-primary/60"
+                  style={{ backgroundColor: LEVEL_COLORS[day.level], ["--w" as string]: wi, ["--d" as string]: di }}
                   onMouseEnter={(e) => {
-                    const rect = (e.target as HTMLElement).getBoundingClientRect();
+                    const r = e.currentTarget.getBoundingClientRect();
+                    const half = 110;
                     setHovered({
-                      date: formatDate(day.date),
+                      date: fmt(day.date),
                       count: day.count,
-                      x: rect.left,
-                      y: rect.top,
+                      x: Math.min(Math.max(r.left + r.width / 2, half), window.innerWidth - half),
+                      y: r.top,
                     });
                   }}
-                  onMouseLeave={() => setHovered(null)}
                 />
-              ))}
+                )
+              )}
             </div>
           ))}
-
-          {hovered && (
-            <div
-              className="pointer-events-none fixed z-50 rounded-md border border-border-default bg-bg-surface-elevated px-2 py-1 text-[0.7rem] whitespace-nowrap text-text-secondary shadow-lg"
-              style={{ left: hovered.x, top: hovered.y - 36 }}
-            >
-              <span className="font-semibold text-text-primary">{hovered.count}</span>{" "}
-              contributions on {hovered.date}
-            </div>
-          )}
         </div>
       </div>
 
       <div className="mt-3 flex items-center justify-between font-mono text-[0.68rem] text-text-dim">
         <p>
-          <span className="text-text-primary">{total}</span> contributions this year
+          <span className="text-text-primary">{total}</span> contributions in {year}
         </p>
         <div className="flex items-center gap-1">
           <span>Less</span>
           {LEVEL_COLORS.map((c, i) => (
-            <span key={i} className="h-[10px] w-[10px] rounded-[2px]" style={{ backgroundColor: c }} />
+            <span key={i} className="size-[10px] rounded-[2px]" style={{ backgroundColor: c }} />
           ))}
           <span>More</span>
         </div>
       </div>
+
+      {hovered && (
+        <div
+          className="pointer-events-none fixed z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-border-default bg-bg-surface-elevated px-2.5 py-1.5 text-[0.7rem] text-text-secondary shadow-lg"
+          style={{ left: hovered.x, top: hovered.y - 40 }}
+        >
+          <span className="font-semibold text-text-primary">{hovered.count === 0 ? "No" : hovered.count}</span>{" "}
+          contribution{hovered.count === 1 ? "" : "s"} · {hovered.date}
+        </div>
+      )}
     </div>
   );
 }
