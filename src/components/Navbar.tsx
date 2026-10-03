@@ -36,7 +36,7 @@ export default function Navbar() {
         <NameOrigin />
 
         {/* scrolls itself on very narrow phones rather than widening the page */}
-        <ul className="no-scrollbar flex min-w-0 items-center gap-2.5 overflow-x-auto sm:gap-5">
+        <ul className="no-scrollbar ml-1.5 flex min-w-0 items-center gap-2.5 overflow-x-auto sm:ml-0 sm:gap-5">
           {links.map((link) => {
             const active = pathname === link.href;
             return (

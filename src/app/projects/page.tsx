@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import BackLink from "@/components/BackLink";
 import Footer from "@/components/Footer";
 import Section from "@/components/Section";
 import ProjectCard from "@/components/ProjectCard";
@@ -9,6 +10,7 @@ export default function ProjectsPage() {
     <>
       <Navbar />
       <main className="mx-auto w-full max-w-[800px] flex-1 px-5 md:px-6">
+        <BackLink />
         <Section index="01" kicker="Projects" title="Everything I've built.">
           <div className="project-grid grid gap-x-4 gap-y-6 sm:grid-cols-2">
             {allProjects.map((project, i, list) => (

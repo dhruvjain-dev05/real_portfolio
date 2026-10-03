@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import BackLink from "@/components/BackLink";
 import Footer from "@/components/Footer";
 import Section from "@/components/Section";
 import { profile } from "@/data/profile";
@@ -12,6 +13,7 @@ export default function ResumePage() {
     <>
       <Navbar />
       <main className="mx-auto w-full max-w-[800px] flex-1 px-5 md:px-6">
+        <BackLink />
         <Section index="01" kicker="Resume" title="The short version.">
           <div className="flex flex-wrap items-center gap-2">
             <a href={profile.resumeUrl} download="Dhruv-Jain-Resume.pdf" className={btn}>

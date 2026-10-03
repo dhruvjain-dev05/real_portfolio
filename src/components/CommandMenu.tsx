@@ -80,9 +80,10 @@ export default function CommandMenu() {
   const openMenu = useCallback(() => {
     returnFocus.current = document.activeElement as HTMLElement | null;
     setQuery("");
-    setActive(0);
+    // start on the page you're on (Home / Projects / Resume are the first three rows)
+    setActive(pathname === "/projects" ? 1 : pathname === "/resume" ? 2 : 0);
     setOpen(true);
-  }, []);
+  }, [pathname]);
 
   const closeMenu = useCallback(() => {
     document.body.style.overflow = "";
