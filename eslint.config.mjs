@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // scratch scripts, not part of the site
+    ".tmp_scripts/**",
   ]),
 ]);
 

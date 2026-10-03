@@ -30,6 +30,7 @@ import { playBounce, playKick, playStep } from "./sound";
 // skips.
 
 const SEEN_KEY = "jyora:kickoff";
+const GREETING = "Hello, welcome ⚽";
 
 // timeline, ms from start
 const T_DROP = 150;
@@ -307,7 +308,9 @@ export default function KickoffIntro() {
   if (!wants || done) return null;
 
   return (
-    <div ref={rootRef} aria-hidden className="fixed inset-0 z-[1003] cursor-pointer select-none">
+    // "dark" scopes the dark tokens to the intro, so it stays black even though
+    // the site itself defaults to light
+    <div ref={rootRef} aria-hidden className="dark fixed inset-0 z-[1003] cursor-pointer select-none">
       <div ref={stageRef} className="absolute inset-0 overflow-hidden bg-bg-primary">
         <div
           ref={lineRef}
@@ -318,11 +321,22 @@ export default function KickoffIntro() {
           ref={captionRef}
           className="absolute inset-x-0 text-center font-mono text-[0.6rem] uppercase tracking-[0.32em] text-text-dim opacity-0"
         >
-          Kick-off
+          Kick-off · by the GOAT
         </p>
         <div ref={playerRef} className="absolute left-0 top-0 will-change-transform">
           <span className="absolute -bottom-1 left-[48%] h-1.5 w-[42%] -translate-x-1/2 rounded-[50%] bg-text-primary/10 blur-[2px]" />
           <div ref={spriteRef} className="relative" />
+          {/* speech bubble — rides along with Messi (child of the moving player) */}
+          <div
+            className="absolute bottom-full left-1/2 mb-1 -translate-x-1/2 whitespace-nowrap rounded-md border border-rule-strong bg-bg-surface-elevated px-2.5 py-1 font-mono text-[0.62rem] text-text-primary shadow-sm"
+            style={{ animation: "kickoff-bubble 300ms ease-out 450ms both" }}
+          >
+            {GREETING}
+            <span
+              aria-hidden
+              className="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-x-[5px] border-t-[5px] border-x-transparent border-t-rule-strong"
+            />
+          </div>
         </div>
         <div ref={ballRef} className="absolute left-0 top-0 opacity-0 will-change-transform" />
         <p className="absolute inset-x-0 bottom-8 text-center font-mono text-[0.58rem] uppercase tracking-[0.2em] text-text-ghost">

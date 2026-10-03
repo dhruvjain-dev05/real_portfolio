@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local visitor-counter file (the deployed site uses Redis instead)
+/.data/

@@ -28,8 +28,10 @@ function load() {
 
     // a browser is only counted once; returning visitors just read the total
     const res = await fetch("/api/visitors", { method: mine ? "GET" : "POST" });
+    // no counter store available (e.g. not set up yet): show nothing, not "0"
+    if (!res.ok) throw new Error("visitor counter unavailable");
     const { count } = await res.json();
-    if (!mine && res.ok) {
+    if (!mine) {
       try {
         localStorage.setItem(KEY, String(count));
       } catch {}

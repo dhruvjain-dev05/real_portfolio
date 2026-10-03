@@ -16,7 +16,7 @@ export const experience: ExperienceEntry[] = [
   {
     company: "Wallnut",
     role: "Software Engineer Intern",
-    dates: "January 2026 - Present",
+    dates: "June 2026 - Present",
     location: "Remote",
     status: "present",
     statusLabel: "Working",

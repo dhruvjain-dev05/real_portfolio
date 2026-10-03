@@ -12,8 +12,6 @@ const pages = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/resume", label: "Resume" },
-  { href: "/analytics", label: "Analytics" },
-  { href: "/support", label: "Support" },
 ];
 
 // the Contact section just above already carries the email, so it is left out here

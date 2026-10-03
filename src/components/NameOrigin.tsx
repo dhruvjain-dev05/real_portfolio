@@ -106,9 +106,7 @@ export default function NameOrigin() {
 
               <p className="mt-3 text-center text-[0.75rem] leading-relaxed text-text-muted">
                 My parents&apos; names, folded into one — the closest thing I have to a
-                signature. No matter what else ever happens in my life, this already did
-                — I got them as my parents. Nothing I ever become will matter more than
-                that.
+                signature.
               </p>
               <PopoverArrow className="fill-bg-surface-elevated" />
             </motion.div>

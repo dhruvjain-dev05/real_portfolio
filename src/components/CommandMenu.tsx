@@ -10,8 +10,6 @@ import {
   HiOutlineHome,
   HiOutlineCollection,
   HiOutlineDocumentText,
-  HiOutlineChartBar,
-  HiOutlineHeart,
   HiOutlineHashtag,
   HiOutlineClipboardCopy,
   HiOutlineDocumentDownload,
@@ -66,17 +64,13 @@ export default function CommandMenu() {
   // false on the server and during hydration, the real value right after
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
 
-  const [shortcutKey, setShortcutKey] = useState("⌘K");
+  const isApple = useSyncExternalStore(
+    noopSubscribe,
+    () => /Mac|iPod|iPhone|iPad/i.test(navigator.userAgent),
+    () => true,
+  );
+  const shortcutKey = isApple ? "⌘K" : "Ctrl K";
 
-  useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      !/Mac|iPod|iPhone|iPad/i.test(navigator.userAgent)
-    ) {
-      setShortcutKey("Ctrl K");
-    }
-  }, []);
-  
   const openMenu = useCallback(() => {
     returnFocus.current = document.activeElement as HTMLElement | null;
     setQuery("");
@@ -146,11 +140,12 @@ export default function CommandMenu() {
   }, [open]);
 
   // Ensure menu closes and scroll is unblocked on any route change
-  useEffect(() => {
+  // (the scroll-lock effect above releases overflow once `open` flips to false)
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
     setOpen(false);
-    document.body.style.overflow = "";
-    document.documentElement.style.overflow = "";
-  }, [pathname]);
+  }
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -184,8 +179,6 @@ export default function CommandMenu() {
       { id: "home", group: "Navigation", label: "Home", hint: "Overview, highlights, and recent work", icon: HiOutlineHome, run: go("/") },
       { id: "projects-page", group: "Navigation", label: "Projects", hint: "Browse all projects & live demos", icon: HiOutlineCollection, run: go("/projects") },
       { id: "resume", group: "Navigation", label: "Resume", hint: "Experience, education, and skills", icon: HiOutlineDocumentText, keywords: "cv", run: go("/resume") },
-      { id: "analytics", group: "Navigation", label: "Analytics", hint: "Live stats and activity", icon: HiOutlineChartBar, run: go("/analytics") },
-      { id: "support", group: "Navigation", label: "Support", hint: "Sponsor or say thanks", icon: HiOutlineHeart, keywords: "sponsor donate", run: go("/support") },
 
       ...(
         [

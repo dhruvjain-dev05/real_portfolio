@@ -8,7 +8,7 @@ export interface ProjectData {
   name: string;
   desc: string;
   tech: string[];
-  github: string;
+  github?: string; // omit when the repo is private / not public
   live?: string;
   isUnderDevelopment?: boolean;
   isPrivate?: boolean;
@@ -44,7 +44,7 @@ export const featuredProjects: ProjectData[] = [
     kind: "Mobile · Real-time queue",
     desc: "Real-time salon queue and booking system with separate client and stylist apps, commute-aware dispatching, live Socket.io syncing and Razorpay payments.",
     tech: ["React Native", "TypeScript", "Node.js", "MongoDB", "Redis", "WebSockets", "AWS EC2"],
-    github: "https://github.com/chetan137/SalonWala",
+    // repo link returned 404 (private?) — add `github: "…"` back once it is public
     live: "https://www.salonwallah.in/",
     stats: "8 min wait times",
   },

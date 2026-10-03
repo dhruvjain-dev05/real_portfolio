@@ -89,11 +89,69 @@ function toWeeksAndMonths(days: ContributionDay[]) {
   return { weeks, months };
 }
 
+const LEVELS: Record<string, ContributionDay["level"]> = {
+  NONE: 0,
+  FIRST_QUARTILE: 1,
+  SECOND_QUARTILE: 2,
+  THIRD_QUARTILE: 3,
+  FOURTH_QUARTILE: 4,
+};
+
+// With the owner's own token, GitHub's GraphQL API counts private-repo
+// contributions too — the same total the owner sees on their profile while
+// logged in. The public page below only sees public ones.
+async function fromGraphql(username: string, year: number, token: string): Promise<ContributionData | null> {
+  const query = `query($login: String!, $from: DateTime!, $to: DateTime!) {
+    user(login: $login) {
+      contributionsCollection(from: $from, to: $to) {
+        contributionCalendar {
+          totalContributions
+          weeks { contributionDays { date contributionCount contributionLevel } }
+        }
+      }
+    }
+  }`;
+  const res = await fetch("https://api.github.com/graphql", {
+    method: "POST",
+    headers: { Authorization: `bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      query,
+      variables: { login: username, from: `${year}-01-01T00:00:00Z`, to: `${year}-12-31T23:59:59Z` },
+    }),
+    next: { revalidate: 3600 },
+  });
+  if (!res.ok) return null;
+  const cal = (await res.json())?.data?.user?.contributionsCollection?.contributionCalendar;
+  if (!cal) return null;
+
+  const days: ContributionDay[] = cal.weeks
+    .flatMap((w: { contributionDays: { date: string; contributionCount: number; contributionLevel: string }[] }) => w.contributionDays)
+    .map((d: { date: string; contributionCount: number; contributionLevel: string }) => ({
+      date: d.date,
+      count: d.contributionCount,
+      level: LEVELS[d.contributionLevel] ?? 0,
+    }))
+    .filter((d: ContributionDay) => d.date.startsWith(`${year}-`))
+    .sort((a: ContributionDay, b: ContributionDay) => a.date.localeCompare(b.date));
+  if (!days.length) return null;
+
+  const { weeks, months } = toWeeksAndMonths(days);
+  return { weeks, months, total: cal.totalContributions, year };
+}
+
 // The calendar year (Jan–Dec), like the GitHub profile page: days that haven't
-// happened yet come back as empty cells.
+// happened yet come back as empty cells. Uses GITHUB_TOKEN when it is set
+// (counts private contributions), otherwise GitHub's public page.
 export async function getContributionData(username: string): Promise<ContributionData | null> {
+  const year = new Date().getUTCFullYear();
+  const token = process.env.GITHUB_TOKEN;
+  if (token) {
+    try {
+      const viaApi = await fromGraphql(username, year, token);
+      if (viaApi) return viaApi;
+    } catch {}
+  }
   try {
-    const year = new Date().getUTCFullYear();
     const res = await fetch(`https://github.com/users/${username}/contributions?from=${year}-01-01&to=${year}-12-31`, {
       headers: { "User-Agent": "Mozilla/5.0 (compatible; personal-portfolio-build)" },
       next: { revalidate: 3600 },

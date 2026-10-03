@@ -25,10 +25,34 @@ const jetbrainsMono = JetBrains_Mono({
 
 const KICKOFF_SCRIPT = `(function(){try{var f=/[?&]kickoff\b/.test(location.search);if(!f&&(location.pathname!=="/"||sessionStorage.getItem("jyora:kickoff")))return;window.__jyoraKickoff=true;document.documentElement.setAttribute("data-kickoff","");var l=document.createElement("link");l.rel="preload";l.as="image";l.href="/sprites/footballer.webp";document.head.appendChild(l)}catch(e){}})()`;
 
+const TITLE = "Dhruv Jain | Software Engineer";
+const DESCRIPTION =
+  "Dhruv Jain — Software Engineer Intern building full-stack B2B SaaS, AI and real-time apps.";
+
+// Set NEXT_PUBLIC_SITE_URL to a custom domain; otherwise use Vercel's production URL
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000");
+
 export const metadata: Metadata = {
-  title: "Dhruv Jain | Software Engineer",
-  description:
-    "Dhruv Jain — Software Engineer Intern building full-stack B2B SaaS, AI and real-time apps.",
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    type: "website",
+    title: TITLE,
+    description: DESCRIPTION,
+    siteName: "Dhruv Jain",
+    images: [{ url: "/images/profile/avatar.jpg", alt: "Dhruv Jain" }],
+  },
+  twitter: {
+    card: "summary",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ["/images/profile/avatar.jpg"],
+  },
 };
 
 export default function RootLayout({
@@ -38,7 +62,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`dark ${instrumentSerif.variable} ${jakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${instrumentSerif.variable} ${jakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <head>
         {/* decides, before first paint, whether the kick-off intro plays

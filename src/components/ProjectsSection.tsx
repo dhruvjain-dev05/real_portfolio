@@ -7,9 +7,11 @@ import { featuredProjects } from "@/data/projects";
 export default function ProjectsSection() {
   return (
     <Section id="projects" index="02" kicker="Projects" title="Things I've shipped." compact className="!py-8 md:!py-10">
-      <div className="project-grid grid auto-rows-fr gap-4 sm:grid-cols-2">
-        {featuredProjects.map((project) => (
-          <ProjectCard key={project.name} project={project} />
+      <div className="project-grid grid gap-x-4 gap-y-6 sm:grid-cols-2">
+        {featuredProjects.map((project, i, list) => (
+          <div key={project.name} className={list.length % 2 === 1 && i === list.length - 1 ? "sm:col-span-2" : ""}>
+            <ProjectCard project={project} wide={list.length % 2 === 1 && i === list.length - 1} />
+          </div>
         ))}
       </div>
 

@@ -18,7 +18,6 @@ export default function PostcardContact() {
   const [from, setFrom] = useState("");
   const [msg, setMsg] = useState("");
   const [sent, setSent] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   const content = () => {
     const who = name.trim() || "A visitor";
@@ -29,12 +28,18 @@ export default function PostcardContact() {
   };
   const q = (s: string) => encodeURIComponent(s);
 
-  const send = (e: React.FormEvent) => {
-    e.preventDefault();
+  // backup for people who use a desktop mail app instead of Gmail
+  const mailApp = () => {
     if (!msg.trim()) return;
     const { subject, body } = content();
     window.location.href = `${profile.email}?subject=${q(subject)}&body=${q(body)}`;
     setSent(true);
+  };
+
+  // main action: opens a Gmail compose tab, pre-filled
+  const send = (e: React.FormEvent) => {
+    e.preventDefault();
+    gmail();
   };
 
   const gmail = () => {
@@ -46,14 +51,6 @@ export default function PostcardContact() {
       "noopener"
     );
     setSent(true);
-  };
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch {}
   };
 
   // labels stay legible (≥10.5px, muted not dim); fields are 16px on phones so
@@ -139,17 +136,17 @@ export default function PostcardContact() {
                 <HiOutlineCheck className="shrink-0 text-status-active" /> Almost there — press send in your mail.
               </>
             ) : (
-              "Opens your mail app, pre-filled."
+              "Opens Gmail with your message ready."
             )}
           </p>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <button
               type="button"
-              onClick={gmail}
+              onClick={mailApp}
               disabled={!msg.trim()}
               className="inline-flex items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[0.76rem] font-medium text-text-secondary transition-colors hover:text-text-primary disabled:pointer-events-none disabled:opacity-40"
             >
-              Open in Gmail <HiOutlineExternalLink size={13} />
+              Use mail app <HiOutlineExternalLink size={13} />
             </button>
             <button
               type="submit"
@@ -161,17 +158,6 @@ export default function PostcardContact() {
           </div>
         </div>
       </form>
-
-      <p className="mt-4 text-center font-mono text-[0.72rem] leading-[1.7] text-text-muted">
-        Prefer email?{" "}
-        <a href={profile.email} className="break-all text-text-secondary underline decoration-dashed underline-offset-4 hover:text-text-primary">
-          {address}
-        </a>
-        {" · "}
-        <button type="button" onClick={copy} className="underline decoration-dashed underline-offset-4 hover:text-text-primary">
-          {copied ? "copied ✓" : "copy"}
-        </button>
-      </p>
     </div>
   );
 }

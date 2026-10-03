@@ -430,11 +430,15 @@ html[data-kickoff=""]::before {
   position: fixed;
   inset: 0;
   z-index: 1003;
-  background: var(--bg-primary);
+  background: #121212; /* the intro is always dark, whatever the page theme */
   animation: kickoff-failsafe 0s linear 8s forwards;
 }
 @keyframes kickoff-failsafe {
   to { visibility: hidden; }
+}
+@keyframes kickoff-bubble {
+  from { opacity: 0; transform: translate(-50%, 4px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
 }
 
 /* light-theme banner: the sun's glow slowly swells and settles */
