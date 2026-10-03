@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import BackToTopKick from "@/components/football/BackToTopKick";
 import FooterSignature from "@/components/FooterSignature";
 import VisitorCounter from "@/components/VisitorCounter";
@@ -57,22 +58,30 @@ export default function Footer() {
 
         <BackToTopKick />
 
-        {/* closing lines: copyright, then where / when / which visitor */}
+        {/* closing lines: copyright, then where / when */}
         <div className="mt-9 flex flex-col items-center gap-1.5 font-mono text-text-muted">
           <p className="text-[0.72rem]">
             © {new Date().getFullYear()} {profile.name}. All rights reserved.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-[0.68rem]">
-            <span className="flex items-center gap-1.5">
-              <span className="status-dot-glow live-pulse-dot h-1.5 w-1.5 rounded-full bg-status-active text-status-active" />
-              {profile.location}
-              <span className="text-text-ghost">·</span>
-              <span className="tabular-nums">{time || " "}</span>
-            </span>
-            <span aria-hidden className="text-text-ghost">·</span>
-            <VisitorCounter variant="sentence" />
-          </div>
+          <span className="flex items-center gap-1.5 text-[0.68rem]">
+            <span className="status-dot-glow live-pulse-dot h-1.5 w-1.5 rounded-full bg-status-active text-status-active" />
+            {profile.location}
+            <span className="text-text-ghost">·</span>
+            <span className="tabular-nums">{time || " "}</span>
+          </span>
         </div>
+
+        {/* the very last line, centred on its own: one soft fade-up when it
+            scrolls in, nothing else moving */}
+        <motion.div
+          className="mt-6 flex min-h-5 justify-center"
+          initial={{ opacity: 0, y: 6 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-20px" }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <VisitorCounter variant="sentence" className="text-[0.82rem] font-medium text-text-secondary" />
+        </motion.div>
       </div>
     </footer>
   );
