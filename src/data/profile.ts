@@ -12,7 +12,7 @@ export const profile = {
   location: "Mumbai, India",
   bio: [
     "Final-year <b>Computer Science (AI & ML)</b> student at University of Mumbai, currently a <b><span style=\"white-space:nowrap\">Full Stack Engineer Intern</span></b> building production-ready software.",
-    "My work spans <b>full-stack development, web systems, backend engineering, AWS, and AI/LLM applications</b> — I like seeing how different pieces of technology fit together to solve real problems.",
+    "My work spans <b>full-stack development</b>, web systems, backend engineering, <b>AWS</b>, and <b>AI/LLM applications</b> — I like seeing how different pieces of technology fit together to solve real problems.",
     "Still early in the journey, but I learn by building — always open to connecting with people in software, AI, and technology.",
   ],
   email: "mailto:dhruvrakeshjain@gmail.com",

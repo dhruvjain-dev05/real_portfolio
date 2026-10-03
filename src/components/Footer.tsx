@@ -3,19 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import BackToTopKick from "@/components/football/BackToTopKick";
-import SocialButton from "@/components/SocialButton";
+import FooterSignature from "@/components/FooterSignature";
 import VisitorCounter from "@/components/VisitorCounter";
 import { profile } from "@/data/profile";
-import { socialLinks } from "@/data/socialLinks";
 
 const pages = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/resume", label: "Resume" },
 ];
-
-// the Contact section just above already carries the email, so it is left out here
-const connect = socialLinks.filter((l) => l.name !== "Email");
 
 export default function Footer() {
   const [time, setTime] = useState("");
@@ -38,25 +34,9 @@ export default function Footer() {
   return (
     <footer className="relative mx-auto w-full max-w-[800px] overflow-hidden">
       <div className="flex flex-col items-center border-t border-dashed border-rule-strong px-5 pt-9 pb-10 text-center md:px-6">
-        <p className="font-mono text-[0.66rem] uppercase tracking-[0.28em] text-text-muted">
-          Connect
-        </p>
+        <FooterSignature />
 
-        <ul className="mt-5 flex flex-wrap items-center justify-center gap-2">
-          {connect.map((l) => (
-            <li key={l.name}>
-              <SocialButton
-                href={l.url}
-                label={l.name}
-                icon={l.icon}
-                color={l.color}
-                external={l.url.startsWith("http")}
-              />
-            </li>
-          ))}
-        </ul>
-
-        <nav aria-label="Footer" className="mt-6">
+        <nav aria-label="Footer">
           <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             {pages.map((p) => (
               <li key={p.href}>

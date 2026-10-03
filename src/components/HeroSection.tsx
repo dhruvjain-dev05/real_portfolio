@@ -105,7 +105,7 @@ export default function HeroSection() {
       <motion.p
         variants={fadeUp}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[0.7rem] text-text-dim"
+        className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[0.72rem] text-text-muted"
       >
         <span>{profile.location}</span>
         <span className="text-text-ghost">/</span>
@@ -125,11 +125,16 @@ export default function HeroSection() {
       <motion.ul
         variants={fadeUp}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="mt-7 space-y-3.5"
+        className="mt-7 max-w-[62ch] space-y-3.5"
       >
+        {/* emphasis comes from colour + semibold, not heavy bold, so the key
+            terms stand out without the paragraph reading dense */}
         {profile.bio.map((line, i) => (
-          <li key={i} className="flex gap-3 text-[0.95rem] leading-[1.75] text-text-secondary">
-            <span className="mt-[0.7em] h-[3px] w-[3px] shrink-0 rounded-full bg-text-ghost" />
+          <li
+            key={i}
+            className="flex gap-3 text-[0.95rem] leading-[1.75] text-text-secondary [&_b]:font-semibold [&_b]:text-text-primary"
+          >
+            <span className="mt-[0.72em] h-1 w-1 shrink-0 rounded-full bg-text-faint" />
             <span dangerouslySetInnerHTML={{ __html: line }} />
           </li>
         ))}
@@ -140,7 +145,7 @@ export default function HeroSection() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="mt-8 flex flex-wrap items-center gap-2"
       >
-        <SocialButton href={profile.email} label="Get in touch" icon={HiOutlineMail} external={false} />
+        <SocialButton href="#contact" label="Get in touch" icon={HiOutlineMail} external={false} />
         {heroSocialLinks.map((link) => (
           <SocialButton key={link.name} href={link.url} label={link.name} icon={link.icon} color={link.color} />
         ))}
