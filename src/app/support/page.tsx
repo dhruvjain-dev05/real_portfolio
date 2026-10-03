@@ -1,7 +1,16 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Section from "@/components/Section";
+import type { Metadata } from "next";
 import { HiOutlineArrowRight } from "react-icons/hi";
+
+// not linked from anywhere yet — keep it out of search results
+export const metadata: Metadata = {
+  robots: { index: false },
+};
+
+// set to a real sponsor page (e.g. GitHub Sponsors) to show the link below
+const sponsorUrl: string | null = null;
 
 export default function SupportPage() {
   return (
@@ -14,17 +23,19 @@ export default function SupportPage() {
             straight back into building and maintaining more of it.
           </p>
 
-          <a
-            href="https://github.com/sponsors/yourusername"
-            target="_blank"
-            rel="noreferrer"
-            className="group mt-6 inline-flex items-center gap-2 text-sm text-text-muted transition-colors hover:text-text-primary"
-          >
-            <span className="border-b border-rule-strong pb-0.5 transition-colors group-hover:border-text-primary">
-              Sponsor on GitHub
-            </span>
-            <HiOutlineArrowRight className="transition-transform group-hover:translate-x-0.5" />
-          </a>
+          {sponsorUrl && (
+            <a
+              href={sponsorUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="group mt-6 inline-flex items-center gap-2 text-sm text-text-muted transition-colors hover:text-text-primary"
+            >
+              <span className="border-b border-rule-strong pb-0.5 transition-colors group-hover:border-text-primary">
+                Sponsor on GitHub
+              </span>
+              <HiOutlineArrowRight className="transition-transform group-hover:translate-x-0.5" />
+            </a>
+          )}
         </Section>
       </main>
       <Footer />

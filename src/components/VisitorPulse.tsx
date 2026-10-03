@@ -8,7 +8,7 @@ export default function VisitorPulse() {
   return (
     <div className="overflow-hidden rounded-lg ring-1 ring-rule">
       <div className="banner-placeholder flex h-32 w-full flex-col items-center justify-center gap-1.5 text-center">
-        <p className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-text-ghost">
+        <p className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-text-dim">
           People who&apos;ve stopped by
         </p>
         <p className="max-w-[26ch] text-[0.8rem] text-text-muted">

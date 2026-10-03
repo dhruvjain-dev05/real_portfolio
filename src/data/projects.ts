@@ -44,7 +44,7 @@ export const featuredProjects: ProjectData[] = [
     kind: "Mobile · Real-time queue",
     desc: "Real-time salon queue and booking system with separate client and stylist apps, commute-aware dispatching, live Socket.io syncing and Razorpay payments.",
     tech: ["React Native", "TypeScript", "Node.js", "MongoDB", "Redis", "WebSockets", "AWS EC2"],
-    // repo link returned 404 (private?) — add `github: "…"` back once it is public
+    // repo is private / not public — add `github: "…"` once it is
     live: "https://www.salonwallah.in/",
     stats: "8 min wait times",
   },

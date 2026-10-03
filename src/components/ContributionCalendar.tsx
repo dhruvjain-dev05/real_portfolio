@@ -33,7 +33,9 @@ export default function ContributionCalendar({
 }) {
   const [hovered, setHovered] = useState<{ date: string; count: number; x: number; y: number } | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-  const seen = useInView(gridRef, { once: true, margin: "-60px" });
+  // starts the reveal ~300px before the calendar scrolls into view, so it is
+  // already drawn (or nearly) by the time you get there
+  const seen = useInView(gridRef, { once: true, margin: "0px 0px 300px 0px" });
 
   // real GitHub data failed to load — an honest gap beats a fake graph
   if (!data) {

@@ -42,10 +42,13 @@ export default function Footer() {
               <li key={p.href}>
                 <Link
                   href={p.href}
-                  className="group relative font-mono text-[0.78rem] text-text-muted transition-colors hover:text-text-primary"
+                  className="group -my-2.5 block py-2.5 font-mono text-[0.78rem] text-text-muted transition-colors hover:text-text-primary sm:my-0 sm:py-0"
                 >
-                  {p.label}
-                  <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-text-primary transition-transform duration-300 group-hover:scale-x-100" />
+                  {/* taller tap area on phones (padding cancelled by margin), same look */}
+                  <span className="relative">
+                    {p.label}
+                    <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-text-primary transition-transform duration-300 group-hover:scale-x-100" />
+                  </span>
                 </Link>
               </li>
             ))}

@@ -72,10 +72,13 @@ export default function PostcardContact() {
               type="button"
               aria-pressed={topic === t}
               onClick={() => setTopic(topic === t ? null : t)}
-              className={`surface-3d btn-pop rounded-md border px-3 py-2 text-[0.76rem] font-medium sm:py-1.5 ${
-                topic === t ? "!bg-text-display !text-bg-primary" : "text-text-secondary hover:text-text-primary"
+              className={`surface-3d btn-pop inline-flex items-center gap-1 rounded-md border px-3 py-2 text-[0.76rem] font-medium sm:py-1.5 ${
+                topic === t
+                  ? "!border-text-display !bg-text-display !text-bg-primary"
+                  : "text-text-secondary hover:text-text-primary"
               }`}
             >
+              {topic === t && <HiOutlineCheck aria-hidden className="-ml-0.5 shrink-0" size={13} />}
               {t}
             </button>
           ))}

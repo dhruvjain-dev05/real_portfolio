@@ -150,7 +150,7 @@ export default function TerminalCard() {
             key={c}
             type="button"
             onClick={() => exec(c)}
-            className="surface-3d btn-pop rounded-md border px-2.5 py-1.5 font-mono text-[0.68rem] text-text-secondary hover:text-text-primary"
+            className="surface-3d btn-pop rounded-md border px-2.5 py-2.5 font-mono text-[0.68rem] sm:py-1.5 text-text-secondary hover:text-text-primary"
           >
             {c}
           </button>

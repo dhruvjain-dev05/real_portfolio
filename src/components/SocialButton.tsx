@@ -3,7 +3,7 @@ import type { IconType } from "react-icons";
 // One button style for every social / contact link on the site: a small
 // pressed-in "3D" chip (see .surface-3d in globals.css) with icon + label.
 export const socialButtonClass =
-  "surface-3d btn-pop group inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[0.75rem] font-medium text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary";
+  "surface-3d btn-pop group inline-flex items-center gap-1.5 rounded-md border px-3 py-2.5 text-[0.75rem] sm:py-1.5 font-medium text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary";
 
 export default function SocialButton({
   href,

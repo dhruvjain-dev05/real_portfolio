@@ -76,7 +76,7 @@ export default function ExperienceSection() {
             >
               <header className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
                 <div className="flex items-center gap-4">
-                  <div className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-white p-1.5 ring-1 ring-rule">
+                  <div className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-white p-1.5 ring-1 ring-rule dark:bg-neutral-200 dark:ring-border-hover">
                     {entry.logoUrl ? (
                       <Image
                         src={entry.logoUrl}

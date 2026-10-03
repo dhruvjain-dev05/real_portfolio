@@ -27,7 +27,7 @@ export default function ContactCard() {
             type="button"
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
-            className={`rounded-lg px-4 py-1.5 font-mono text-[0.72rem] transition-colors ${
+            className={`rounded-lg px-4 py-2.5 font-mono sm:py-1.5 text-[0.72rem] transition-colors ${
               tab === t.id ? "bg-text-display text-bg-primary" : "text-text-muted hover:text-text-primary"
             }`}
           >
@@ -35,7 +35,13 @@ export default function ContactCard() {
           </button>
         ))}
       </div>
-      {tab === "message" ? <PostcardContact /> : <TerminalCard />}
+      {/* both stay mounted so a half-written message survives a peek at the terminal */}
+      <div hidden={tab !== "message"}>
+        <PostcardContact />
+      </div>
+      <div hidden={tab !== "terminal"}>
+        <TerminalCard />
+      </div>
     </div>
   );
 }

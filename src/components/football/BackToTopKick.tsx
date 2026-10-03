@@ -392,7 +392,7 @@ export default function BackToTopKick() {
         onPointerLeave={() => primeRef.current(false)}
         onFocus={() => primeRef.current(true)}
         onBlur={() => primeRef.current(false)}
-        className="surface-3d btn-pop group inline-flex items-center gap-2 rounded-md border px-4 py-1.5 font-mono text-[0.7rem] text-text-secondary"
+        className="surface-3d btn-pop group inline-flex items-center gap-2 rounded-md border px-4 py-2.5 font-mono text-[0.7rem] text-text-secondary sm:py-1.5"
       >
         Back to top
         <HiArrowUp className="transition-transform duration-200 group-hover:-translate-y-0.5" />

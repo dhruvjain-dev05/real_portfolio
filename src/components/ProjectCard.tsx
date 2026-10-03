@@ -63,21 +63,20 @@ function TechCircle({ name }: { name: string }) {
 }
 
 const btn =
-  "surface-3d btn-pop inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[0.72rem] font-medium text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary";
+  "surface-3d btn-pop inline-flex items-center gap-1.5 rounded-md border px-2.5 py-2.5 text-[0.72rem] font-medium text-text-primary sm:py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-ghost focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary";
 
 // `wide`: spans both grid columns (image left, text right) so a last, odd card
 // fills its row instead of sitting alone beside an empty gap
 export default function ProjectCard({ project, wide = false }: { project: ProjectData; wide?: boolean }) {
   const href = project.live ?? project.github;
-  // in-progress / private are worth flagging; otherwise show what kind of
-  // project it is (a "live" pill would only repeat the Live button)
+  // in-progress / private are worth flagging as a pill; what kind of project
+  // it is (plus a headline stat) reads as a quiet caption under the name
   const status = project.isUnderDevelopment
     ? { label: "in progress", dot: "bg-status-future" }
     : project.isPrivate
       ? { label: "private", dot: "bg-text-dim" }
-      : project.kind
-        ? { label: project.kind, dot: "" }
-        : null;
+      : null;
+  const caption = [project.kind, project.stats].filter(Boolean).join(" · ");
 
   return (
     <motion.article
@@ -90,30 +89,54 @@ export default function ProjectCard({ project, wide = false }: { project: Projec
       <div
         className={`project-card group relative flex h-full flex-col overflow-hidden rounded-xl border border-rule-strong bg-bg-primary transition-[opacity,transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-border-hover hover:shadow-[0_16px_32px_-18px_rgb(0_0_0/0.45)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${wide ? "sm:flex-row" : ""}`}
       >
-        {/* previews are exported at 1200×559 and always shown whole. In the wide
-            card the preview floats, uncropped, in a padded panel beside the text */}
+        {/* previews are exported at 1200×559. In the wide card the preview fills
+            its whole panel beside the text, edge to edge (no inset, no empty frame) */}
         <div
           className={`relative aspect-[1200/559] w-full shrink-0 overflow-hidden border-b border-rule-strong bg-bg-surface ${
-            wide ? "sm:flex sm:aspect-auto sm:w-[56%] sm:items-center sm:border-b-0 sm:border-r sm:p-5" : ""
+            wide ? "sm:aspect-auto sm:w-[56%] sm:border-b-0 sm:border-r" : ""
           }`}
         >
         <div
           className={`relative aspect-[1200/559] w-full overflow-hidden ${
-            wide ? "sm:rounded-lg sm:border sm:border-rule-strong sm:shadow-[0_10px_28px_-14px_rgb(0_0_0/0.35)]" : ""
+            wide ? "sm:absolute sm:inset-0 sm:aspect-auto" : ""
           }`}
         >
           {project.banner ? (
             <>
-              <Image
-                src={project.banner}
-                alt={`${project.name} landing page`}
-                fill
-                unoptimized
-                sizes="(min-width: 640px) 400px, 92vw"
-                className={`object-cover transition-transform duration-500 group-hover:scale-[1.03] ${
-                  project.bannerDark ? "dark:hidden" : ""
-                }`}
-              />
+              {/* wide card: the panel is taller than the preview's shape, so the
+                  whole preview is shown (never cropped) and the spare space is
+                  filled with a soft, blurred copy of the same picture */}
+              {wide && (
+                <Image
+                  src={project.banner}
+                  alt=""
+                  aria-hidden
+                  fill
+                  unoptimized
+                  sizes="400px"
+                  className="hidden scale-125 object-cover opacity-60 blur-2xl sm:block"
+                />
+              )}
+              {/* in the wide card the sharp preview sits centred at its own shape,
+                  with a hairline above and below it against the blurred fill */}
+              <div
+                className={
+                  wide
+                    ? "contents sm:absolute sm:inset-x-0 sm:top-1/2 sm:block sm:aspect-[1200/559] sm:-translate-y-1/2 sm:overflow-hidden sm:border-y sm:border-rule-strong"
+                    : "contents"
+                }
+              >
+                <Image
+                  src={project.banner}
+                  alt={`${project.name} landing page`}
+                  fill
+                  unoptimized
+                  sizes="(min-width: 640px) 400px, 92vw"
+                  className={`object-cover transition-transform duration-500 group-hover:scale-[1.03] ${
+                    project.bannerDark ? "dark:hidden" : ""
+                  }`}
+                />
+              </div>
               {project.bannerDark && (
                 <Image
                   src={project.bannerDark}
@@ -154,11 +177,11 @@ export default function ProjectCard({ project, wide = false }: { project: Projec
           <div className="flex items-start justify-between gap-2">
             <div>
               <h3 className="font-display text-[1.3rem] leading-tight text-text-display">{project.name}</h3>
-              {project.stats && <p className="mt-0.5 font-mono text-[0.64rem] text-text-dim">{project.stats}</p>}
+              {caption && <p className="mt-1 font-mono text-[0.66rem] text-text-muted">{caption}</p>}
             </div>
             {status && (
               <span className="surface-3d inline-flex shrink-0 items-center gap-1.5 rounded-md border px-1.5 py-0.5 text-[0.62rem] font-medium text-text-secondary">
-                {status.dot && <span aria-hidden className={`size-1.5 rounded-full ${status.dot}`} />}
+                <span aria-hidden className={`size-1.5 rounded-full ${status.dot}`} />
                 {status.label}
               </span>
             )}
@@ -166,13 +189,14 @@ export default function ProjectCard({ project, wide = false }: { project: Projec
 
           <p className={`flex-1 text-[0.8rem] leading-[1.6] text-text-secondary ${wide ? "" : "line-clamp-3"}`}>{project.desc}</p>
 
-          <div className="mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-3 pt-1">
-            <div className="flex items-center">
-              {project.tech.map((t) => (
-                <TechCircle key={t} name={t} />
-              ))}
-            </div>
-            <div className="flex shrink-0 items-center gap-2">
+          {/* stack on its own row, then the actions below a dashed rule */}
+          <div className="mt-2 flex items-center pt-1">
+            {project.tech.map((t) => (
+              <TechCircle key={t} name={t} />
+            ))}
+          </div>
+          {(project.live || project.github) && (
+            <div className="mt-2 flex items-center justify-end gap-2 border-t border-dashed border-rule-strong pt-4">
               {project.live && (
                 <a href={project.live} target="_blank" rel="noreferrer" className={btn}>
                   <HiOutlineExternalLink size={13} /> Live
@@ -184,7 +208,7 @@ export default function ProjectCard({ project, wide = false }: { project: Projec
                 </a>
               )}
             </div>
-          </div>
+          )}
         </div>
       </div>
     </motion.article>

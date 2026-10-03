@@ -84,7 +84,7 @@ export default function MumbaiClock() {
               transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
               className="w-[220px] px-4 py-4"
             >
-              <p className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-text-ghost">
+              <p className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-text-dim">
                 Right now
               </p>
 

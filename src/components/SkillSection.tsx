@@ -70,7 +70,7 @@ export default function SkillSection() {
               role="tab"
               aria-selected={selected}
               onClick={() => setActive(tab.label)}
-              className={`relative shrink-0 rounded-lg px-2.5 py-1 text-[0.78rem] transition-colors ${
+              className={`relative shrink-0 rounded-lg px-2.5 py-2.5 text-[0.78rem] sm:py-1 transition-colors ${
                 selected ? "text-text-display" : "text-text-muted hover:text-text-primary"
               }`}
             >
