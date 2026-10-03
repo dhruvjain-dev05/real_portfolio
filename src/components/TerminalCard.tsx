@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { HiArrowUp } from "react-icons/hi";
 import { profile } from "@/data/profile";
 import { experience } from "@/data/experience";
 import { featuredProjects } from "@/data/projects";
@@ -142,6 +143,15 @@ export default function TerminalCard() {
           spellCheck={false}
           className="min-w-0 flex-1 bg-transparent text-base text-text-primary outline-none placeholder:text-text-dim sm:text-[0.8rem]"
         />
+        {/* send — same as pressing Enter; lights up once something is typed */}
+        <button
+          type="submit"
+          aria-label="Run command"
+          disabled={!value.trim()}
+          className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-text-display text-bg-primary transition-[opacity,transform] duration-200 hover:scale-105 active:scale-95 disabled:opacity-25 disabled:hover:scale-100 sm:h-7 sm:w-7"
+        >
+          <HiArrowUp size={14} />
+        </button>
       </form>
 
       <div className="mt-3 flex flex-wrap gap-2">
